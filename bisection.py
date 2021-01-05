@@ -5,9 +5,9 @@ def bisection(a,b,func):
 
     for step in range(max_step):
         c = (a + b)/2.0
-        fa = func(a)-0.5
-        fc = func(c)-0.5
-        fb = func(b)-0.5
+        fa = func(a)
+        fc = func(c)
+        fb = func(b)
     
         a = np.where( np.sign(fc) == np.sign(fa), c, a )
         b = np.where( np.sign(fc) == np.sign(fb), c, b )

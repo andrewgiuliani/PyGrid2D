@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_mesh(vertices, cell_list, vertex_counts):
+def plot_mesh(vertices, cell_list, vertex_counts, dom):
     
     ax = plt.axes()
-    ax.set_xlim(vertices[:,0].min(), vertices[:,0].max())
-    ax.set_ylim(vertices[:,1].min(), vertices[:,1].max())
+    ax.set_xlim(dom[0], dom[2])
+    ax.set_ylim(dom[1], dom[3])
     
 #    cell_list = [cell_list[1]]
 #    vertex_counts = [vertex_counts[1]]
@@ -23,8 +23,9 @@ def plot_mesh(vertices, cell_list, vertex_counts):
 
         segs[:,nv,:] = segs[:,0,:]
 
-        line_segments = LineCollection(segs, linestyle='solid')
+        line_segments = LineCollection(segs, linestyle='solid', linewidth = 0.5)
         
         
         ax.add_collection(line_segments)
+    ax.set_aspect('equal', 'box')
     plt.show()
