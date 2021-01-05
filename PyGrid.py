@@ -41,30 +41,39 @@ irr = np.equal(num,4).astype(int)
 cuts = np.logical_and(np.greater(num , 0) , np.less(num, 4) ).astype(int)
 num_cuts = np.sum(cuts)
 
-h = np.where( np.logical_xor(vert_in[0:-1,:],vert_in[1:,:]) ) 
-v   = np.where( np.logical_xor(vert_in[:,0:-1],vert_in[:,1:]) ) 
+# grid of booleans that say if horizontal or vertical faces have irregular intersections
+# h[0][0] is TRUE ==> cell 0 has a bottom irreg
+# h[0][1] is TRUE ==> cell 0 has a top irreg
+h_bool  = np.logical_xor(vert_in[0:-1,:],vert_in[1:,:])
+v_bool  = np.logical_xor(vert_in[:,0:-1],vert_in[:,1:])
+h_idx   = np.where( h_bool ) 
+v_idx   = np.where( v_bool ) 
 
-xh1 = XX[h[0]  , h[1]]
-xh2 = XX[h[0]+1, h[1]]
-xh  = bs.bisection(xh1, xh2, lambda xin : fb.fbody(xin,YY[h],bid) )  
+xh1 = XX[h_idx[0]  , h_idx[1]]
+xh2 = XX[h_idx[0]+1, h_idx[1]]
+xh  = bs.bisection(xh1, xh2, lambda xin : fb.fbody(xin,YY[h_idx],bid) )  
 
-yv1 = YY[v]
-yv2 = YY[v[0], v[1]+1]
-yv  = bs.bisection(yv1, yv2, lambda yin : fb.fbody(XX[v],yin,bid) )  
+yv1 = YY[v_idx]
+yv2 = YY[v_idx[0], v_idx[1]+1]
+yv  = bs.bisection(yv1, yv2, lambda yin : fb.fbody(XX[v_idx],yin,bid) )  
 
 whole_idx = np.where(irr)
 cut_idx   = np.where(cuts)
 
-has_bot    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]  ])
-has_right  = np.logical_and(vert_in[cut_idx[0]+1 , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
-has_top    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
-has_left   = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]   , cut_idx[1]  ])
+
+has_bot  = h_bool[ cut_idx[0]  , cut_idx[1]  ]
+has_top  = h_bool[ cut_idx[0]  , cut_idx[1]+1]
+has_left = v_bool[ cut_idx[0]  , cut_idx[1]  ]
+has_right= v_bool[ cut_idx[0]+1, cut_idx[1]  ]
+
+#has_bot    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]  ])
+#has_right  = np.logical_and(vert_in[cut_idx[0]+1 , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
+#has_top    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
+#has_left   = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]   , cut_idx[1]  ])
 
 # make grid of irregular vertex indices
-bot_idx = np.cumsum(has_bot)-1
-right_idx = np.cumsum(has_right)-1 + bot_idx[
-top_idx = np.cumsum(has_top)-1
-left_idx = np.cumsum(has_left)-1
+h_vert_idx   = np.cumsum(np.ravel(h_bool)).reshape(h_bool.shape)-1
+v_vert_idx   = np.cumsum(np.ravel(v_bool)).reshape(v_bool.shape)-1 + (h_vert_idx[-1,-1]+1)
 
 
 num_vertices = np.sum(vert_in) + xh.size + yv.size
@@ -85,8 +94,8 @@ regular_vertices = np.hstack( (
     ) )
 vertices = np.vstack( ( 
                      regular_vertices,
-                     np.hstack((xh[:,None], YY[h][:,None] )),
-                     np.hstack((XX[v][:,None], yv[:,None]))
+                     np.hstack((xh[:,None], YY[h_idx][:,None] )),
+                     np.hstack((XX[v_idx][:,None], yv[:,None]))
                      ) )
 
 
@@ -108,39 +117,53 @@ cells_whole = np.hstack( (
 
 
 # assemble the cut cells
+
+# shift the irregular vertices to be at the end of the vertices list
+h_vert_idx = h_vert_idx + np.sum(vert_in)
+v_vert_idx = v_vert_idx + np.sum(vert_in) 
+
 v1 = cut_idx
 v2 = (v1[0]+1, v1[1]  )
 v3 = (v1[0]+1, v1[1]+1)
 v4 = (v1[0]  , v1[1]+1)
 
 v1_idx  = np.where( vert_in[v1][:,None],  vertex_idx[v1][:,None], -np.ones((num_cuts,1)).astype(int)  )
-v12_idx = np.where(has_bot,bot_idx,-np.ones(num_cuts) )[:,None]
-v2_idx  = np.where( vert_in[v2][:,None],  vertex_idx[v2][:,None], -np.ones((num_cuts,1)).astype(int)  )
-v23_idx = np.where(has_right,right_idx,-np.ones(num_cuts) )[:,None]
-v3_idx  = np.where( vert_in[v3][:,None],  vertex_idx[v3][:,None], -np.ones((num_cuts,1)).astype(int)  )
-v34_idx = np.where(has_top,top_idx,-np.ones(num_cuts) )[:,None]
-v4_idx  = np.where( vert_in[v4][:,None],  vertex_idx[v4][:,None], -np.ones((num_cuts,1)).astype(int)  )
-v41_idx = np.where(has_left,left_idx,-np.ones(num_cuts) )[:,None]
+v12_idx = np.where(has_bot,h_vert_idx[v1],-np.ones(num_cuts) )[:,None]
 
-cut_vertices = np.hstack( ( v1_idx,
-                            v12_idx,
-                            v2_idx,
-                            v23_idx,
-                            v3_idx,
-                            v34_idx,
-                            v4_idx,
-                            v41_idx)
-                        )
+v2_idx  = np.where( vert_in[v2][:,None],  vertex_idx[v2][:,None], -np.ones((num_cuts,1)).astype(int)  )
+v23_idx = np.where(has_right,v_vert_idx[v2],-np.ones(num_cuts) )[:,None]
+
+v3_idx  = np.where( vert_in[v3][:,None],  vertex_idx[v3][:,None], -np.ones((num_cuts,1)).astype(int)  )
+v34_idx = np.where(has_top,h_vert_idx[v4],-np.ones(num_cuts) )[:,None]
+
+v4_idx  = np.where( vert_in[v4][:,None],  vertex_idx[v4][:,None], -np.ones((num_cuts,1)).astype(int)  )
+v41_idx = np.where(has_left,v_vert_idx[v1],-np.ones(num_cuts) )[:,None]
+
+cut_vertices = np.hstack( ( v1_idx,v12_idx,v2_idx,v23_idx,v3_idx,v34_idx,v4_idx,v41_idx)  ).astype(int)
 cut_nv = np.sum( cut_vertices != -1, axis = 1)
 
+s_idx = np.argsort(cut_nv)
+cut_nv = cut_nv[s_idx]
+cut_vertices = cut_vertices[s_idx,:]
 
 
-ipdb.set_trace(context=21)
+cut_cells = [None] * 4 # here, we only support cut cells with 3,4,5, or 6 vertices
+for nv in range(3,6):
+    idx = np.where(cut_nv == nv)[0]
+    cells_nv = np.ravel(cut_vertices[idx,:])
+    
+    pos_vals = cells_nv > -1
+    cell_nv = np.compress(pos_vals, cells_nv).reshape((-1,nv))
+    cut_cells[nv-3] = cell_nv
+
+cell_list = [cells_whole] + cut_cells
+vertex_count = [4,3,4,5]
 
 # reorder vertices counterclockwise
-#pm.plot_mesh(vertices,cells_whole)
+pm.plot_mesh(vertices,cell_list,vertex_count)
 
 
+#ipdb.set_trace(context=21)
 
 #import matplotlib.pyplot as plt
 #plt.scatter(vertices[:,0], vertices[:,1])
