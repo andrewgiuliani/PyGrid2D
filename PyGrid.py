@@ -42,8 +42,8 @@ cuts = np.logical_and(np.greater(num , 0) , np.less(num, 4) ).astype(int)
 num_cuts = np.sum(cuts)
 
 # grid of booleans that say if horizontal or vertical faces have irregular intersections
-# h[0][0] is TRUE ==> cell 0 has a bottom irreg
-# h[0][1] is TRUE ==> cell 0 has a top irreg
+# h_bool[0][0] is TRUE ==> cell 0 has a bottom irreg
+# h_bool[0][1] is TRUE ==> cell 0 has a top irreg
 h_bool  = np.logical_xor(vert_in[0:-1,:],vert_in[1:,:])
 v_bool  = np.logical_xor(vert_in[:,0:-1],vert_in[:,1:])
 h_idx   = np.where( h_bool ) 
@@ -66,10 +66,6 @@ has_top  = h_bool[ cut_idx[0]  , cut_idx[1]+1]
 has_left = v_bool[ cut_idx[0]  , cut_idx[1]  ]
 has_right= v_bool[ cut_idx[0]+1, cut_idx[1]  ]
 
-#has_bot    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]  ])
-#has_right  = np.logical_and(vert_in[cut_idx[0]+1 , cut_idx[1]  ],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
-#has_top    = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]+1 , cut_idx[1]+1])
-#has_left   = np.logical_and(vert_in[cut_idx[0]   , cut_idx[1]+1],vert_in[cut_idx[0]   , cut_idx[1]  ])
 
 # make grid of irregular vertex indices
 h_vert_idx   = np.cumsum(np.ravel(h_bool)).reshape(h_bool.shape)-1
@@ -159,8 +155,55 @@ for nv in range(3,6):
 cell_list = [cells_whole] + cut_cells
 vertex_count = [4,3,4,5]
 
+
+# compute mesh stats
+def PolyArea(x,y):
+    return 0.5*np.abs(np.sum(x * np.roll(y,1,axis=1),axis = 1)-np.sum(y * np.roll(x,1,axis=1), axis = 1))
+area = np.zeros((0,1))
+for cells,nv in zip(cell_list, vertex_count):
+    xcoord = vertices[np.ravel(cells),0].reshape( (cells.shape[0], nv) )
+    ycoord = vertices[np.ravel(cells),1].reshape( (cells.shape[0], nv) )
+    ar = PolyArea(xcoord,ycoord)
+    area = np.vstack( (area,ar[:,None]) )
+
+
+reg_vol = area[0]
+min_vol_frac = np.min(area) / reg_vol
+str_whole = str(cells_whole.shape[0])
+str_cut = str(num_cuts)
+str_tot = str(cells_whole.shape[0]+num_cuts)
+str_min_vol = '%.16e' % min_vol_frac[0]
+
+from rich.console import Console
+from rich.table import Column, Table
+console = Console()
+
+table = Table(show_header = False)
+table.add_column("Name", style="dim", width=15)
+table.add_column("Value",justify="right")
+table.add_row(
+    "whole cells", str_whole
+)
+table.add_row(
+    "cut cells", str_cut 
+        )
+table.add_row(
+    "total cells", str_tot 
+)
+table.add_row(
+    "min. vol. frac.", str_min_vol 
+)
+console.print(table)
+
+#str_whole = str(cells_whole.shape[0])
+#str_cut = str(num_cuts)
+#str_tot = str(cells_whole.shape[0]+num_cuts)
+#stats = 'whole cells \t {whole} \ncut cells \t {cut} \ntotal number \t {tot} '.format(whole = str_whole, cut = str_cut, tot = str_tot) 
+#print('**** MESH METADATA ****')
+#print(stats) 
+#print('***********************')
 # reorder vertices counterclockwise
-pm.plot_mesh(vertices,cell_list,vertex_count)
+#pm.plot_mesh(vertices,cell_list,vertex_count)
 
 
 #ipdb.set_trace(context=21)
