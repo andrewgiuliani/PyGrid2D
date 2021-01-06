@@ -2,9 +2,14 @@ import numpy as np
 import ipdb
 import sys
 import argparse
-import fbody as fb
 import bisection as bs
 import plot_mesh as pm
+
+
+from domain import Domain
+from ringleb import Ringleb
+from annulus import Annulus
+from supersonic import Supersonic
 
 import ipdb
 from rich.console import Console
@@ -18,19 +23,24 @@ console = Console()
 parser = argparse.ArgumentParser()
 parser.add_argument("-Nx", "--Nx", type=int, help="number of elements in x-direction")
 parser.add_argument("-Ny", "--Ny", type=int, help="number of elements in y-direction")
-parser.add_argument("-left", "--LEFT", type=float, help="left endpoint", default = 0)
-parser.add_argument("-right", "--RIGHT", type=float, help="right endpoint", default = 0)
-parser.add_argument("-bottom", "--BOTTOM", type=float, help="h endpoint", default = 0)
-parser.add_argument("-top", "--TOP", type=float, help="top endpoint", default = 0)
 parser.add_argument("-fbody","--fbody", type=int, help="geometry type")
 parser.add_argument("-plot","--PLOT", action='store_true', help="plot")
-parser.add_argument("-q","--Q", default = 1, help="q is the degree of the curved boundary")
+parser.add_argument("-q","--Q", type = int, default = 1, help="q is the degree of the curved boundary")
 args = parser.parse_args()
+
+bid = args.fbody
+if bid == 0:
+    domain = Annulus()
+elif bid == 1:
+    domain = Supersonic()
+elif bid == 2:
+    domain = Ringleb()
+else:
+    quit()
 
 Nx = args.Nx
 Ny = args.Ny
-bid = args.fbody
-dom = np.array([args.LEFT, args.BOTTOM, args.RIGHT, args.TOP])
+dom = np.array([domain.left, domain.bottom, domain.right, domain.top])
 plot_flag = args.PLOT
 q = args.Q
 
@@ -41,7 +51,7 @@ table.add_column("Name", style="dim", width=15)
 table.add_column("Value",justify="right")
 table.add_row("(Nx,Ny)", '({},{})'.format(Nx,Ny))
 table.add_row("Domain", '[{},{}] x [{},{}]'.format(dom[0],dom[2], dom[1], dom[3] ))
-table.add_row("Grid geometry", fb.bname(bid) )
+table.add_row("Grid geometry", domain.name )
 console.print(table)
 
 
@@ -54,7 +64,7 @@ XX = np.transpose(XX)
 YY = np.transpose(YY)
 
 
-vert_in = fb.fbody(XX,YY,bid)
+vert_in = domain.in_domain(XX,YY)
 idx_vert_in = np.where(vert_in)
 num = vert_in[0:-1,0:-1] + vert_in[0:-1,1:] + vert_in[1:,0:-1] + vert_in[1:,1:]
 irr = np.equal(num,4).astype(int)
@@ -74,12 +84,12 @@ v_idx   = np.where( v_bool )
 console.print("Computing the x-intersections...", style="bold blue")
 xh1 = XX[h_idx[0]  , h_idx[1]]
 xh2 = XX[h_idx[0]+1, h_idx[1]]
-xh  = bs.bisection(xh1, xh2, lambda xin : (fb.fbody(xin,YY[h_idx],bid)-0.5) )  
+xh  = bs.bisection(xh1, xh2, lambda xin : (domain.in_domain(xin,YY[h_idx])-0.5) )  
 
 console.print("Computing the y-intersections...", style="bold blue")
 yv1 = YY[v_idx]
 yv2 = YY[v_idx[0], v_idx[1]+1]
-yv  = bs.bisection(yv1, yv2, lambda yin : (fb.fbody(XX[v_idx],yin,bid)-0.5) )  
+yv  = bs.bisection(yv1, yv2, lambda yin : (domain.in_domain(XX[v_idx],yin)-0.5) )  
 
 whole_idx = np.where(irr)
 cut_idx   = np.where(cuts)
@@ -95,7 +105,7 @@ has_right= v_bool[ cut_idx[0]+1, cut_idx[1]  ]
 h_vert_idx   = np.cumsum(np.ravel(h_bool)).reshape(h_bool.shape)-1
 v_vert_idx   = np.cumsum(np.ravel(v_bool)).reshape(v_bool.shape)-1 + (h_vert_idx[-1,-1]+1)
 
-
+num_regular_vertices = np.sum(vert_in)
 num_vertices = np.sum(vert_in) + xh.size + yv.size
 
 # assemble all the vertices in the grid
@@ -160,22 +170,18 @@ v41_idx = np.where(has_left,v_vert_idx[v1],-np.ones(num_cuts) )[:,None]
 cut_vertices = np.hstack( ( v1_idx,v12_idx,v2_idx,v23_idx,v3_idx,v34_idx,v4_idx,v41_idx)  ).astype(int)
 cut_nv = np.sum( cut_vertices != -1, axis = 1)
 
+
+
+
+
 console.print("Shifting the cut cell vertices...", style="bold blue")
-cont = 1
-while cont:
-    shift = np.where(cut_vertices[:,1] == -1)[0]
-    cut_vertices[shift,:] = np.roll(cut_vertices[shift,:], -2, axis = 1)
-    cont = np.sum(shift) > 0
-cut_vertices = np.roll(cut_vertices, -1, axis = 1)
-
-
 
 s_idx = np.argsort(cut_nv)
 cut_nv = cut_nv[s_idx]
 cut_vertices = cut_vertices[s_idx,:]
 
 
-cut_cells = [None] * 4 # here, we only support cut cells with 3,4,5, or 6 vertices
+cut_cells = [None] * 3 # here, we only support cut cells with 3,4,5, or 6 vertices
 irreg_edges = np.zeros( ( num_cuts, 2 ) ).astype(int)
 
 count = 0
@@ -187,9 +193,14 @@ for nv in range(3,6):
     cell_nv = np.compress(pos_vals, cells_nv).reshape((-1,nv))
     
     # this is another shift to make sure first and last vertices are edge vertices
+    cont = 1
+    while cont:
+        shift = cell_nv[:,0] < regular_vertices.shape[0] 
+        cell_nv[shift,:] = np.roll(cell_nv[shift,:],1,axis=1)
+        cont = np.sum(shift) > 0
     shift = cell_nv[:,-1] < regular_vertices.shape[0] 
     cell_nv[shift,:] = np.roll(cell_nv[shift,:],-1,axis=1)
-   
+    
     
     cut_cells[nv-3] = cell_nv
     irreg_edges[count:count+cell_nv.shape[0],:] = cell_nv[:,(0,-1)]
@@ -201,33 +212,40 @@ vertex_count = [4,3,4,5]
 
 
 
-X1 = vertices[irreg_edges[:,0],0]
-Y1 = vertices[irreg_edges[:,0],1]
-X2 = vertices[irreg_edges[:,1],0]
-Y2 = vertices[irreg_edges[:,1],1]
-
+#X1 = vertices[irreg_edges[:,0],0]
+#Y1 = vertices[irreg_edges[:,0],1]
+#X2 = vertices[irreg_edges[:,1],0]
+#Y2 = vertices[irreg_edges[:,1],1]
+#
 #import matplotlib.pyplot as plt
 #plt.scatter(X1,Y1)
 #plt.scatter(X2,Y2)
 #pm.plot_mesh(vertices,cell_list,vertex_count, dom)
 
+if q > 1:
+    console.print("Computing the curved and corner boundaries...", style="bold blue")
+    corners_flag = domain.is_corner(irreg_edges, vertices)
+    num_corners = np.sum(corners_flag)
+    regular_idx = np.where(np.logical_not(corners_flag))[0]
+    corner_idx = np.where(corners_flag)[0]
+    
+    # compute regular high order edges
+    new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q, bid)
+    shift =  vertices.shape[0]
+    new_cells = new_cells + shift
+    vertices = np.vstack( (vertices, new_vertices) )
+    for c in range(1,len(cell_list)):
+#        ipdb.set_trace(context=21)
+        idx = np.where( cut_nv == vertex_count[c] )[0]
+        cell_list[c] = np.hstack( (cell_list[c], new_cells[idx,:]) ) 
+        vertex_count[c] = vertex_count[c] + q-1
 
-console.print("Computing the curved and corner boundaries...", style="bold blue")
-#corners_flag = fb.is_corner(irreg_edges, vertices, bid)
-#num_corners = np.sum(corners_flag)
-#regular_idx = np.which(np.logical_not(corners_flag))
-#corner_idx = np.which(corners_flag)
-
-# compute regular high order edges
-#extra_vertices1, extra_cells1 = bd.compute_curved1(irreg_edges[regular_idx,:], vertices,q, bid)
 
 # put the corner cells last
 
 #extra_vertices1,extra_vertices2,cell_append1, cell_append2 = fb.get_curved(cut_cells,vertices,bid)
 #extra_vertices1 = np.zeros( ( num_cuts-num_corners , q-1, 2) )
 #extra_vertices2 = np.zeros( (num_corners, 2*q-1, 2) )
-
-
 
 
 
@@ -272,7 +290,7 @@ console.print(table)
 # reorder vertices counterclockwise
 if plot_flag:
     console.print("Plotting...", style="bold blue")
-    pm.plot_mesh(vertices,cell_list,vertex_count, dom)
+    pm.plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
 
 
 #ipdb.set_trace(context=21)

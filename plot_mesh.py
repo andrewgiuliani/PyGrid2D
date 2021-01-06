@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_mesh(vertices, cell_list, vertex_counts, dom):
+def plot_mesh(vertices, cell_list, vertex_counts, dom, regular_vertices):
     
     ax = plt.axes()
     ax.set_xlim(dom[0], dom[2])
@@ -15,7 +15,7 @@ def plot_mesh(vertices, cell_list, vertex_counts, dom):
 #    cell_list = [cell_list[1]]
 #    vertex_counts = [vertex_counts[1]]
     for cells,nv in zip(cell_list,vertex_counts):
-        #ipdb.set_trace(context=21)
+       # ipdb.set_trace(context=21)
         
         segs = np.zeros((cells.shape[0], nv+1, 2))
         segs[:,0:nv,0] = vertices[np.ravel(cells),0].reshape( (cells.shape[0], nv) )
@@ -28,4 +28,7 @@ def plot_mesh(vertices, cell_list, vertex_counts, dom):
         
         ax.add_collection(line_segments)
     ax.set_aspect('equal', 'box')
+    
+    plt.scatter(vertices[regular_vertices:,0], vertices[regular_vertices:,1], color = 'red', s = 1) 
+    plt.scatter(vertices[0:regular_vertices,0], vertices[0:regular_vertices,1], color = 'black', s = 1) 
     plt.show()
