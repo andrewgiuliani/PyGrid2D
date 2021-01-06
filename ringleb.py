@@ -40,7 +40,7 @@ class Ringleb(Domain):
         c  = bs.bisection(clow, chigh, lambda cin : self.eqn(np.ravel(x),np.ravel(y),cin) )  
         return c.reshape(x.shape)
    
-    def boundary_curve(self, k, q):
+    def kq2xy(self, k, q):
         c = np.sqrt(2. + q**2 - self.gamma * q**2)/np.sqrt(2)
         J = self.compute_J(c)
         rho = self.compute_rho(c)
@@ -73,9 +73,9 @@ class Ringleb(Domain):
     
     def bc(self,x,y):
         k,q = self.xy2kq(x,y)
-        dk_min = 1*(np.abs(k-kmin) < 1e-14)
-        dk_max = 2*(np.abs(k-kmax) < 1e-14)
-        dq_min = 3*(np.abs(q-qmin) < 1e-14)
+        dk_min = -1*(np.abs(k-self.kmin) < 1e-14)
+        dk_max = -2*(np.abs(k-self.kmax) < 1e-14)
+        dq_min = -3*(np.abs(q-self.qmin) < 1e-14)
         
         sanity_check = np.logical_not(np.logical_xor(np.logical_xor(dk_min, dk_max), dq_min))
         num_wrong = np.sum(sanity_check)
@@ -85,6 +85,71 @@ class Ringleb(Domain):
         
         return dk_min+dk_max+dq_min
     
+    def target_ratio(self, wgt, k1, q1, k2, q2, k3, q3) :
+        X1,Y1 =  self.kq2xy(k1,q1)
+        X2,Y2 =  self.kq2xy(k2,q2)
+        X3,Y3 =  self.kq2xy(k3,q3)
+        
+        l1 = np.sqrt( (X2-X1)**2. + (Y2-Y1)**2. )
+        l3 = np.sqrt( (X3-X1)**2. + (Y3-Y1)**2. )
+        
+        return l1/l3 - wgt
+        
+
+    def curved_points(self,wgt,X1,Y1,X2,Y2):
+        bc1 = self.bc(X1,Y1)
+        bc2 = self.bc(X2,Y2)
+        sanity_check = np.logical_not( np.equal(bc1,bc2) )
+        num_wrong = np.sum(sanity_check)
+        if(num_wrong > 0):
+            print("not the same\n")
+            quit()
+        
+        
+        points = np.zeros( (X1.shape[0], wgt.size, 2) )
+        for qq in range(wgt.size):
+            # boundary -1
+            idx1 = np.where( bc1 == -1 )[0]
+            k1,q1 = self.xy2kq(X1[idx1], Y1[idx1])
+            k3,q3 = self.xy2kq(X2[idx1], Y2[idx1])
+            q2 = bs.bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmin, q1, 
+                                                                               self.kmin, qin,
+                                                                               self.kmin, q3 ) )
+            x2,y2 = self.kq2xy(self.kmin,q2)
+            points[idx1,qq,0] = x2
+            points[idx1,qq,1] = y2
+
+            # boundary -2
+            idx2 = np.where( bc1 == -2)[0]
+            k1,q1 = self.xy2kq(X1[idx2], Y1[idx2])
+            k3,q3 = self.xy2kq(X2[idx2], Y2[idx2])
+            q2 = bs.bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmax, q1, 
+                                                                               self.kmax, qin,
+                                                                               self.kmax, q3 ) )
+
+            x2,y2 = self.kq2xy(self.kmax,q2)
+            points[idx2,qq,0] = x2
+            points[idx2,qq,1] = y2
+
+
+            # boundary -3
+            idx3 = np.where( bc1 == -3)[0]
+            k1,q1 = self.xy2kq(X1[idx3], Y1[idx3])
+            k3,q3 = self.xy2kq(X2[idx3], Y2[idx3])
+            k2 = bs.bisection( k1, k3, lambda kin : self.target_ratio(wgt[qq], k1 , self.qmin, 
+                                                                               kin, self.qmin,
+                                                                               k3 , self.qmin ) )
+
+            x2,y2 = self.kq2xy(k2,self.qmin)
+            points[idx3,qq,0] = x2
+            points[idx3,qq,1] = y2
+
+
+
+
+        ipdb.set_trace(context=21)
+        return points
+ 
     
     
     
