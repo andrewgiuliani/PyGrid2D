@@ -228,7 +228,15 @@ if q > 1:
     num_corners = np.sum(corners_flag)
     regular_idx = np.where(np.logical_not(corners_flag))[0]
     corner_idx = np.where(corners_flag)[0]
-    
+
+    # remove the corner cells
+    for c in range(1,len(cell_list)):
+        idx = np.where( cut_nv == vertex_count[c] )[0]
+        keep = np.where(np.logical_not(corners_flag[idx]))[0]
+        cell_list[c] = cell_list[c][keep, :]
+    cut_nv = cut_nv[regular_idx]
+
+
     # compute regular high order edges
     new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q, bid)
     shift =  vertices.shape[0]

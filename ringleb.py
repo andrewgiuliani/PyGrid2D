@@ -90,7 +90,7 @@ class Ringleb(Domain):
         X2,Y2 =  self.kq2xy(k2,q2)
         X3,Y3 =  self.kq2xy(k3,q3)
         
-        l1 = np.sqrt( (X2-X1)**2. + (Y2-Y1)**2. )
+        l1 = np.sqrt( (X3-X2)**2. + (Y3-Y2)**2. )
         l3 = np.sqrt( (X3-X1)**2. + (Y3-Y1)**2. )
         
         return l1/l3 - wgt
@@ -147,7 +147,6 @@ class Ringleb(Domain):
 
 
 
-        ipdb.set_trace(context=21)
         return points
  
     
