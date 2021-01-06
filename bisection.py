@@ -1,6 +1,7 @@
 import numpy as np
 def bisection(a,b,func):
-    max_step = 75
+    # you only need 55 iterations to get to machine precision
+    max_step = 55
     
 
     for step in range(max_step):
