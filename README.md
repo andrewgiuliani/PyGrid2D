@@ -19,7 +19,7 @@ The goal of this work is to provide an easy to install, high order cut cell grid
 We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degenerecies, nor can it handle all types of cut cells.  
 
 ## How does it work?
-The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  First, PyGrid computes whether all grid points lie inside or outside the domain using `in_domain`.  Then, the precise points of intersection along the Cartesian grid lines arer computed using the method of bisection.  After these intersection points are computed, the cut cells are assembled and output in the `ply` data format.  
+The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  The precise points of intersection along the Cartesian grid lines are computed using the method of bisection.  After these intersection points are computed, the cut cells are assembled and output in the `ply` data format.  
 
 If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  For the Ringleb domain, this is done using the method of bisection.
 
