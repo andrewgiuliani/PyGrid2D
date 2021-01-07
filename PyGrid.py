@@ -4,6 +4,7 @@ import sys
 import argparse
 import bisection as bs
 import plot_mesh as pm
+import output as out
 
 
 from domain import Domain
@@ -355,6 +356,7 @@ if plot_flag:
     console.print("Plotting...", style="bold blue")
     pm.plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
 
+out.output_ply(vertices, cell_list, domain, Nx, Ny)
 
 #ipdb.set_trace(context=21)
 
