@@ -184,8 +184,12 @@ cut_vertices = cut_vertices[s_idx,:]
 cut_cells = [None] * 3 # here, we only support cut cells with 3,4,5, or 6 vertices
 irreg_edges = np.zeros( ( num_cuts, 2 ) ).astype(int)
 
+
+min_nv = np.min(cut_nv)
+max_nv = np.max(cut_nv)
+
 count = 0
-for nv in range(3,6):
+for nv in np.arange(min_nv,max_nv+1):
     idx = np.where(cut_nv == nv)[0]
     cells_nv = np.ravel(cut_vertices[idx,:])
     
@@ -202,25 +206,16 @@ for nv in range(3,6):
     cell_nv[shift,:] = np.roll(cell_nv[shift,:],-1,axis=1)
     
     
-    cut_cells[nv-3] = cell_nv
+    cut_cells[nv-min_nv] = cell_nv
     irreg_edges[count:count+cell_nv.shape[0],:] = cell_nv[:,(0,-1)]
     count = count + cell_nv.shape[0]
 
 cell_list = [cells_whole] + cut_cells
-vertex_count = [4,3,4,5]
+vertex_count = [4] + list(np.arange(min_nv,max_nv+1))
 
 
 
-
-#X1 = vertices[irreg_edges[:,0],0]
-#Y1 = vertices[irreg_edges[:,0],1]
-#X2 = vertices[irreg_edges[:,1],0]
-#Y2 = vertices[irreg_edges[:,1],1]
-#
-#import matplotlib.pyplot as plt
-#plt.scatter(X1,Y1)
-#plt.scatter(X2,Y2)
-#pm.plot_mesh(vertices,cell_list,vertex_count, dom)
+#        ipdb.set_trace(context=21)
 
 if q > 1:
     console.print("Computing the curved and corner boundaries...", style="bold blue")
@@ -229,31 +224,50 @@ if q > 1:
     regular_idx = np.where(np.logical_not(corners_flag))[0]
     corner_idx = np.where(corners_flag)[0]
 
+    corner_cell_list = [None] * len(cell_list)
+    corner_cut_nv = cut_nv[corner_idx]
+    corner_vertex_count = [ v for v in vertex_count]
     # remove the corner cells
     for c in range(1,len(cell_list)):
         idx = np.where( cut_nv == vertex_count[c] )[0]
+        
         keep = np.where(np.logical_not(corners_flag[idx]))[0]
+        cidx = np.where(corners_flag[idx])[0]
+
+        corner_cell_list[c] = cell_list[c][cidx, :]
         cell_list[c] = cell_list[c][keep, :]
     cut_nv = cut_nv[regular_idx]
 
 
     # compute regular high order edges
-    new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q, bid)
+    new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q)
     shift =  vertices.shape[0]
     new_cells = new_cells + shift
     vertices = np.vstack( (vertices, new_vertices) )
     for c in range(1,len(cell_list)):
-#        ipdb.set_trace(context=21)
         idx = np.where( cut_nv == vertex_count[c] )[0]
         cell_list[c] = np.hstack( (cell_list[c], new_cells[idx,:]) ) 
         vertex_count[c] = vertex_count[c] + q-1
+    
 
 
-# put the corner cells last
-
-#extra_vertices1,extra_vertices2,cell_append1, cell_append2 = fb.get_curved(cut_cells,vertices,bid)
-#extra_vertices1 = np.zeros( ( num_cuts-num_corners , q-1, 2) )
-#extra_vertices2 = np.zeros( (num_corners, 2*q-1, 2) )
+    if np.sum(corners_flag) > 0 :
+        # deal with the corners
+        new_vertices, new_cells = domain.compute_corner(irreg_edges[corner_idx,:], vertices,q)
+        shift =  vertices.shape[0]
+        new_cells = new_cells + shift
+        vertices = np.vstack( (vertices, new_vertices) )
+        
+        count = 0
+        for c in range(1,len(corner_cell_list)):
+            if corner_cell_list[c].size == 0 :
+                continue
+    
+            idx = np.where( cut_nv == corner_vertex_count[c] )[0]
+            idx = np.compress( corners_flag[idx] , idx ).size
+            corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
+            corner_vertex_count[c] = corner_vertex_count[c] + 2*(q-1) + 1
+            count = count + idx
 
 
 

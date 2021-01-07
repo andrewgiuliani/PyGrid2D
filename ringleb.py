@@ -98,12 +98,12 @@ class Ringleb(Domain):
 
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         bc1 = self.bc(X1,Y1)
-        bc2 = self.bc(X2,Y2)
-        sanity_check = np.logical_not( np.equal(bc1,bc2) )
-        num_wrong = np.sum(sanity_check)
-        if(num_wrong > 0):
-            print("not the same\n")
-            quit()
+#        bc2 = self.bc(X2,Y2)
+#        sanity_check = np.logical_not( np.equal(bc1,bc2) )
+#        num_wrong = np.sum(sanity_check)
+#        if(num_wrong > 0):
+#            print("not the same\n")
+#            quit()
         
         
         points = np.zeros( (X1.shape[0], wgt.size, 2) )
@@ -152,4 +152,20 @@ class Ringleb(Domain):
     
     
     
-       
+    def get_corner_coord(self,bc1, bc2):
+        k13,q13 = self.kq2xy(np.array([self.kmin]), np.array([self.qmin]))
+        k23,q23 = self.kq2xy(np.array([self.kmax]), np.array([self.qmin]))
+        
+        corner13 = np.hstack( (k13,q13) ).reshape( (-1,2) )
+        corner23 = np.hstack( (k23,q23) ).reshape( (-1,2) )
+
+        corner_coords = np.zeros( (bc1.shape[0], 2) )
+        corner_coords[:,0] = np.where( np.logical_and(bc1 == -1,bc2 == -3) , corner13[:,0], corner23[:,0] ) 
+        corner_coords[:,1] = np.where( np.logical_and(bc1 == -1,bc2 == -3) , corner13[:,1], corner23[:,1] ) 
+
+        return corner_coords
+
+
+
+
+
