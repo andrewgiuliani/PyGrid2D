@@ -8,8 +8,8 @@ This is a short Python code that generates two dimensional high order embedded b
 <p align="center"> <i>High order embedded boundary annulus (left) and Ringleb (right) domains.  Each curved boundary segment has q+1 boundary points (red dots), where q = 3.</i> <p align="center">
   
 ## Goal
-The goal of this work is to provide an easy to install, high order cut cell grid generator for simple boundary geometries that have a functional representation.  
-PyGrid assumes that each cut cell is assumed to have only one or two, possibly curved, edges associated to the embedded boundary. 
+The goal of this work is to provide an easy to install, high order cut cell grid generator for simple boundary geometries that have a functional representation. PyGrid assumes that each cut cell is assumed to have only one or two, possibly curved, edges associated to the embedded boundary. 
+
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/annulus_zoom.png" alt="annulus" width="250" > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/ringleb_zoom.png" alt="annulus" width="250" >
