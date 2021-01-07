@@ -24,12 +24,15 @@ The different arguments that `gengrid.py` accepts are explained below:
 
 
 -Nx
+
 number of cells on the grid in the x-direction
 
 -Ny
+
 number of cells on the grid in the y-direction
 
 -fbody
+
 the ID of the embedded boundary to be used.
 * `0`: quarter annulus, for the supersonic vortex problem,
 * `1`: annulus,
@@ -37,9 +40,11 @@ the ID of the embedded boundary to be used.
 * `3`: random blobs.
 
 -plot
+
 display the generated cut cell grid
 
 -q
+
 add curved edges on the cut cells with q+1 interpolation points with the embedded boundary
 
 For example, the Ringleb domain can be generated and plotted by calling
