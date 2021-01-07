@@ -61,6 +61,6 @@ class Domain:
 
         extra_cells1 = np.arange( 0, X1.shape[0] * q ).reshape( (-1, q ) )
         extra_cells2 = np.arange( 0, X1.shape[0] * (q-1) ).reshape( (-1, q-1 ) ) + np.max(extra_cells1)+1
-        extra_cells = np.hstack( ( extra_cells1, extra_cells2) )
+        extra_cells = np.fliplr(np.hstack( ( extra_cells1, extra_cells2) ))
         
         return extra_vertices, extra_cells

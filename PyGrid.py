@@ -224,7 +224,7 @@ if q > 1:
     regular_idx = np.where(np.logical_not(corners_flag))[0]
     corner_idx = np.where(corners_flag)[0]
 
-    corner_cell_list = [None] * len(cell_list)
+    corner_cell_list = [np.array([])] * len(cell_list)
     corner_cut_nv = cut_nv[corner_idx]
     corner_vertex_count = [ v for v in vertex_count]
     # remove the corner cells
@@ -265,12 +265,16 @@ if q > 1:
     
             idx = np.where( cut_nv == corner_vertex_count[c] )[0]
             idx = np.compress( corners_flag[idx] , idx ).size
+            
             corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
-            corner_vertex_count[c] = corner_vertex_count[c] + 2*(q-1) + 1
+            corner_vertex_count[c] = corner_cell_list[c].shape[1]
             count = count + idx
+            
 
 
-
+        # append corner bins
+        cell_list = cell_list + corner_cell_list
+        vertex_count = vertex_count + corner_vertex_count
 
 
 # compute mesh stats
@@ -278,6 +282,9 @@ def PolyArea(x,y):
     return 0.5*np.abs(np.sum(x * np.roll(y,1,axis=1),axis = 1)-np.sum(y * np.roll(x,1,axis=1), axis = 1))
 area = np.zeros((0,1))
 for cells,nv in zip(cell_list, vertex_count):
+    if cells.size == 0:
+        continue
+    
     xcoord = vertices[np.ravel(cells),0].reshape( (cells.shape[0], nv) )
     ycoord = vertices[np.ravel(cells),1].reshape( (cells.shape[0], nv) )
     ar = PolyArea(xcoord,ycoord)
