@@ -20,7 +20,7 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 
 ## 🏗&nbsp; Grid generation
 
-The different arguments that `gengrid.py` accepts are explained below:
+The different arguments that `PyGrid.py` accepts are explained below:
 
 
 -Nx
