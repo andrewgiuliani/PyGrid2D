@@ -18,6 +18,7 @@ def plot_mesh(vertices, cell_list, vertex_counts, dom, regular_vertices):
         if cells.size == 0:
             continue
 
+        #ipdb.set_trace(context=21)
         segs = np.zeros((cells.shape[0], nv+1, 2))
         segs[:,0:nv,0] = vertices[np.ravel(cells),0].reshape( (cells.shape[0], nv) )
         segs[:,0:nv,1] = vertices[np.ravel(cells),1].reshape( (cells.shape[0], nv) )

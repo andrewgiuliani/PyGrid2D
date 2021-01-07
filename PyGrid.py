@@ -182,16 +182,16 @@ console.print("Shifting the cut cell vertices...", style="bold blue")
 s_idx = np.argsort(cut_nv)
 cut_nv = cut_nv[s_idx]
 cut_vertices = cut_vertices[s_idx,:]
-
+cut_idx = (cut_idx[0][s_idx], cut_idx[1][s_idx])
 
 irreg_edges = np.zeros( ( num_cuts, 2 ) ).astype(int)
 
-#ipdb.set_trace(context=21)
 
 
 min_nv = np.min(cut_nv)
 max_nv = np.max(cut_nv)
-cut_cells = [vv for vv in np.arange(min_nv,max_nv+1)]
+cut_cells = [np.array([]) for vv in np.arange(min_nv,max_nv+1)]
+cell_list_idx = [ () for vv in np.arange(min_nv,max_nv+1)]
 
 count = 0
 for nv in np.arange(min_nv,max_nv+1):
@@ -212,39 +212,47 @@ for nv in np.arange(min_nv,max_nv+1):
     
     
     cut_cells[nv-min_nv] = cell_nv
+    cell_list_idx[nv-min_nv] = (cut_idx[0][idx], cut_idx[1][idx])
     irreg_edges[count:count+cell_nv.shape[0],:] = cell_nv[:,(0,-1)]
     count = count + cell_nv.shape[0]
 
 cell_list = [cells_whole] + cut_cells
 vertex_count = [4] + list(np.arange(min_nv,max_nv+1))
-
+cell_ij = [whole_idx] + cell_list_idx
 
 
 #        ipdb.set_trace(context=21)
 
+console.print("Computing the curved and corner boundaries...", style="bold blue")
+corners_flag = domain.is_corner(irreg_edges, vertices)
+num_corners = np.sum(corners_flag)
+regular_idx = np.where(np.logical_not(corners_flag))[0]
+corner_idx = np.where(corners_flag)[0]
+
+corner_cell_ij = [ () ] * len(cell_list)
+corner_cell_list = [np.array([])] * len(cell_list)
+corner_cut_nv = cut_nv[corner_idx]
+corner_vertex_count = [ v for v in vertex_count]
+# remove the corner cells
+for c in range(1,len(cell_list)):
+    #ipdb.set_trace(context=21)
+    idx = np.where( cut_nv == vertex_count[c] )[0]
+    
+    keep = np.where(np.logical_not(corners_flag[idx]))[0]
+    cidx = np.where(corners_flag[idx])[0]
+
+    #ipdb.set_trace(context=21)
+    corner_cell_list[c] = cell_list[c][cidx, :]
+    corner_cell_ij[c] = (cell_ij[c][0][cidx],cell_ij[c][1][cidx])
+
+    
+    cell_list[c] = cell_list[c][keep, :]
+    cell_ij[c] = (cell_ij[c][0][keep],cell_ij[c][1][keep])
+
+cut_nv = cut_nv[regular_idx]
+
+
 if q > 1:
-    console.print("Computing the curved and corner boundaries...", style="bold blue")
-    corners_flag = domain.is_corner(irreg_edges, vertices)
-    num_corners = np.sum(corners_flag)
-    regular_idx = np.where(np.logical_not(corners_flag))[0]
-    corner_idx = np.where(corners_flag)[0]
-
-    corner_cell_list = [np.array([])] * len(cell_list)
-    corner_cut_nv = cut_nv[corner_idx]
-    corner_vertex_count = [ v for v in vertex_count]
-    # remove the corner cells
-    for c in range(1,len(cell_list)):
-        #ipdb.set_trace(context=21)
-        idx = np.where( cut_nv == vertex_count[c] )[0]
-        
-        keep = np.where(np.logical_not(corners_flag[idx]))[0]
-        cidx = np.where(corners_flag[idx])[0]
-
-        corner_cell_list[c] = cell_list[c][cidx, :]
-        cell_list[c] = cell_list[c][keep, :]
-    cut_nv = cut_nv[regular_idx]
-
-
     # compute regular high order edges
     new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q)
     shift =  vertices.shape[0]
@@ -257,44 +265,64 @@ if q > 1:
     
 
 
-    if np.sum(corners_flag) > 0 :
-        # deal with the corners
-        new_vertices, new_cells = domain.compute_corner(irreg_edges[corner_idx,:], vertices,q)
-        shift =  vertices.shape[0]
-        new_cells = new_cells + shift
-        vertices = np.vstack( (vertices, new_vertices) )
-        
-        count = 0
-        for c in range(1,len(corner_cell_list)):
-            if corner_cell_list[c].size == 0 :
-                continue
+if np.sum(corners_flag) > 0 :
+    # deal with the corners
+
     
-            idx = np.where( cut_nv == corner_vertex_count[c] )[0]
-            idx = np.compress( corners_flag[idx] , idx ).size
-            
-            corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
-            corner_vertex_count[c] = corner_cell_list[c].shape[1]
-            count = count + idx
-            
+    new_vertices, new_cells = domain.compute_corner(irreg_edges[corner_idx,:], vertices,q)
+    shift =  vertices.shape[0]
+    new_cells = new_cells + shift
+    vertices = np.vstack( (vertices, new_vertices) )
+    
+    count = 0
+    for c in range(1,len(corner_cell_list)):
+        if corner_cell_list[c].size == 0 :
+            continue
+
+        idx = np.where( cut_nv == corner_vertex_count[c] )[0]
+        idx = np.compress( corners_flag[idx] , idx ).size
+        
+        corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
+        corner_vertex_count[c] = corner_cell_list[c].shape[1]
+        count = count + idx
+        
 
 
-        # append corner bins
-        cell_list = cell_list + corner_cell_list
-        vertex_count = vertex_count + corner_vertex_count
-
+    # append corner bins
+    cell_list = cell_list + corner_cell_list
+    vertex_count = vertex_count + corner_vertex_count
+    cell_ij = cell_ij + corner_cell_ij
 
 # compute mesh stats
 def PolyArea(x,y):
     return 0.5*np.abs(np.sum(x * np.roll(y,1,axis=1),axis = 1)-np.sum(y * np.roll(x,1,axis=1), axis = 1))
 area = np.zeros((0,1))
-for cells,nv in zip(cell_list, vertex_count):
+for cells,nv,ij in zip(cell_list, vertex_count, cell_ij):
     if cells.size == 0:
         continue
     
     xcoord = vertices[np.ravel(cells),0].reshape( (cells.shape[0], nv) )
     ycoord = vertices[np.ravel(cells),1].reshape( (cells.shape[0], nv) )
+    
+    in1 = xcoord >= XX[ij][:,None] 
+    in2 = xcoord <= XX[ij[0]+1, ij[1]][:,None] 
+    in3 = ycoord >= YY[ij][:,None] 
+    in4 = ycoord <= YY[ij[0], ij[1]+1][:,None] 
+
+    all_in = np.logical_and(in1,in2)
+    all_in = np.logical_and(all_in,in3)
+    all_in = np.logical_and(all_in, in4)
+    any_out = np.logical_not(all_in)
+    num_out = np.sum(any_out)
+    
+    if num_out > 0:
+        print("There are some geomtrical vertices that lie outside a Cartesian cell")
+        quit()
+
     ar = PolyArea(xcoord,ycoord)
     area = np.vstack( (area,ar[:,None]) )
+    
+
 
 
 reg_vol = area[0]
