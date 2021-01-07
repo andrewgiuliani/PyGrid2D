@@ -1,6 +1,6 @@
 # PyGrid
 
-This is a short Python code that generates two dimensional high order embedded boundary grids.  The code is fast, with most operations are fully vectorized in Numpy.  There are a number of domains already implemented from [1], that include an annulus domain as well as the domain used in Ringleb flow.
+This is a short Python code that generates two dimensional high order embedded boundary grids.  The code is fast, with most operations fully vectorized in Numpy.  There are a number of domains already implemented from [1], that include an annulus domain as well as the domain used in Ringleb flow.
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/annulus.png" alt="annulus" width="300" > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/ringleb.png" alt="annulus" width="300" >
