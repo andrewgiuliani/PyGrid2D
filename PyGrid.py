@@ -10,6 +10,7 @@ from domain import Domain
 from ringleb import Ringleb
 from annulus import Annulus
 from supersonic import Supersonic
+from blobs import Blobs
 
 import ipdb
 from rich.console import Console
@@ -35,6 +36,8 @@ elif bid == 1:
     domain = Supersonic()
 elif bid == 2:
     domain = Ringleb()
+elif bid == 3:
+    domain = Blobs()
 else:
     quit()
 
@@ -181,12 +184,14 @@ cut_nv = cut_nv[s_idx]
 cut_vertices = cut_vertices[s_idx,:]
 
 
-cut_cells = [None] * 3 # here, we only support cut cells with 3,4,5, or 6 vertices
 irreg_edges = np.zeros( ( num_cuts, 2 ) ).astype(int)
+
+#ipdb.set_trace(context=21)
 
 
 min_nv = np.min(cut_nv)
 max_nv = np.max(cut_nv)
+cut_cells = [vv for vv in np.arange(min_nv,max_nv+1)]
 
 count = 0
 for nv in np.arange(min_nv,max_nv+1):
@@ -229,6 +234,7 @@ if q > 1:
     corner_vertex_count = [ v for v in vertex_count]
     # remove the corner cells
     for c in range(1,len(cell_list)):
+        #ipdb.set_trace(context=21)
         idx = np.where( cut_nv == vertex_count[c] )[0]
         
         keep = np.where(np.logical_not(corners_flag[idx]))[0]
