@@ -51,13 +51,25 @@ For example, the Ringleb domain can be generated and plotted by calling
 ```
 python PyGrid.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
 ```
+
+## Output
+
+PyGrid outputs the cut cell grid in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
+
 ## Dependencies
 For fancy command line output
 ```
 pip install rich
 ```
 
+## Contact
+For help running the code, or any other questions, send me an email at
+`giuliani AT cims DOT nyu DOT edu`
 
+## Citing
+If you find this code useful in your work, you can cite it with
+
+Giuliani, Andrew and Berger, Marsha. "A state redistribution method for discontinuous Galerkin methods on curvilinear embedded boundary grids".
 
 ## 📓&nbsp; License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
