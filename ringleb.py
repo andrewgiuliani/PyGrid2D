@@ -69,7 +69,13 @@ class Ringleb(Domain):
         c1 = np.greater_equal(q,self.qmin)
         c2 = np.logical_and(np.less_equal(self.kmin, k), np.less_equal(k,self.kmax) )
         return np.logical_and(c1,c2).astype(int)
-    
+
+    def bc_id(self, bid):
+        if bid == -1 or bid == -2:
+            return -1
+        else:
+            return -2
+
     
     def bc(self,x,y):
         k,q = self.xy2kq(x,y)

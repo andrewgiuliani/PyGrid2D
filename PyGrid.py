@@ -220,7 +220,7 @@ for nv in np.arange(min_nv,max_nv+1):
 cell_list = [cells_whole] + cut_cells
 vertex_count = [4] + list(np.arange(min_nv,max_nv+1))
 cell_ij = [whole_idx] + cell_list_idx
-
+ncf = [0] + [1] * len(cut_cells)
 
 #        ipdb.set_trace(context=21)
 
@@ -242,7 +242,6 @@ for c in range(1,len(cell_list)):
     keep = np.where(np.logical_not(corners_flag[idx]))[0]
     cidx = np.where(corners_flag[idx])[0]
 
-    #ipdb.set_trace(context=21)
     corner_cell_list[c] = cell_list[c][cidx, :]
     corner_cell_ij[c] = (cell_ij[c][0][cidx],cell_ij[c][1][cidx])
 
@@ -279,10 +278,8 @@ if np.sum(corners_flag) > 0 :
     for c in range(1,len(corner_cell_list)):
         if corner_cell_list[c].size == 0 :
             continue
-
-        idx = np.where( cut_nv == corner_vertex_count[c] )[0]
-        idx = np.compress( corners_flag[idx] , idx ).size
         
+        idx = corner_cell_list[c].shape[0]
         corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
         corner_vertex_count[c] = corner_cell_list[c].shape[1]
         count = count + idx
@@ -293,7 +290,7 @@ if np.sum(corners_flag) > 0 :
     cell_list = cell_list + corner_cell_list
     vertex_count = vertex_count + corner_vertex_count
     cell_ij = cell_ij + corner_cell_ij
-
+    ncf = ncf + len(corner_cell_list) * [2] 
 # compute mesh stats
 def PolyArea(x,y):
     return 0.5*np.abs(np.sum(x * np.roll(y,1,axis=1),axis = 1)-np.sum(y * np.roll(x,1,axis=1), axis = 1))
@@ -344,24 +341,13 @@ table.add_row("total cells", str_tot )
 table.add_row("min. vol. frac.", str_min_vol )
 console.print(table)
 
-#str_whole = str(cells_whole.shape[0])
-#str_cut = str(num_cuts)
-#str_tot = str(cells_whole.shape[0]+num_cuts)
-#stats = 'whole cells \t {whole} \ncut cells \t {cut} \ntotal number \t {tot} '.format(whole = str_whole, cut = str_cut, tot = str_tot) 
-#print('**** MESH METADATA ****')
-#print(stats) 
-#print('***********************')
 # reorder vertices counterclockwise
 if plot_flag:
     console.print("Plotting...", style="bold blue")
     pm.plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
 
-out.output_ply(vertices, cell_list, domain, Nx, Ny)
+out.output_ply(vertices, cell_list, cell_ij, domain, Nx, Ny)
 
 #ipdb.set_trace(context=21)
 
-#import matplotlib.pyplot as plt
-#plt.scatter(vertices[:,0], vertices[:,1])
-#plt.grid()
-#plt.show()
 
