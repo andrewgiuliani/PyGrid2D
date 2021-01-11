@@ -33,6 +33,9 @@ class Annulus(Domain):
             quit()
         
         return r1+r2    
+
+    def bc_id(self, bid):
+        return bid
     
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         bc1 = self.bc(X1,Y1)
