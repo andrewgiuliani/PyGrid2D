@@ -32,10 +32,10 @@ class Circles(Domain):
         return bval.astype(int).reshape( X.shape )
 
     def bc(self,x,y):
-        x = np.array(x).reshape( (-1,1) )
-        y = np.array(y).reshape( (-1,1) )
+        Xp = x.ravel() 
+        Yp = y.ravel() 
 
-        rdiff = np.sqrt( (x-self.centroids[:,0])**2. +  (y-self.centroids[:,1])**2.)-self.Ri
+        rdiff = np.sqrt( (Xp[:,None]-self.centroids[:,0])**2. +  (Yp[:,None]-self.centroids[:,1])**2.)-self.Ri
         bools = rdiff < 1e-14
         idx = -np.where(rdiff < 1e-14)[1]-1
         return idx 
