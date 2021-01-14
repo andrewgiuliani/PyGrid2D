@@ -10,8 +10,10 @@ import output as out
 from domain import Domain
 from ringleb import Ringleb
 from annulus import Annulus
+from annulus_acoustics import Annulus_acoustics
 from supersonic import Supersonic
 from blobs import Blobs
+from circles import Circles
 
 import ipdb
 from rich.console import Console
@@ -39,6 +41,10 @@ elif bid == 2:
     domain = Ringleb()
 elif bid == 3:
     domain = Blobs()
+elif bid == 4:
+    domain = Annulus_acoustics()
+elif bid == 5:
+    domain = Circles()
 else:
     quit()
 

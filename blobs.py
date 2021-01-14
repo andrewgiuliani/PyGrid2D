@@ -14,8 +14,8 @@ class Blobs(Domain):
     
     def __init__(self):
         XX,YY = np.meshgrid( np.linspace(self.left,self.right,self.num_blobsx) , np.linspace(self.bottom,self.top, self.num_blobsy))
-        XX = 0.6 * XX + 0.2
-        YY = 0.6 * YY + 0.2
+        XX = 0.6 * XX + 0.15
+        YY = 0.6 * YY + 0.15
         self.centroids = np.hstack( (XX.ravel()[:,None], YY.ravel()[:,None] ) ) 
         self.num_blobs = self.centroids.shape[0]
         
