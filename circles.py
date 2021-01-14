@@ -14,11 +14,12 @@ class Circles(Domain):
     
     def __init__(self):
         theta = np.linspace( 0, 2 * np.pi, self.num_blobs+1)[:,None]
-        theta = theta[:-1]
-        Ro = 6
+        theta = theta[:-1]-3*np.pi/2
+        Ro = 5
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
         self.num_blobs = self.centroids.shape[0]
         self.Ri = 2*np.ones ((1,self.num_blobs) )
+#        ipdb.set_trace(context=21)
 
 
     def in_domain(self, X,Y):
@@ -40,7 +41,7 @@ class Circles(Domain):
         idx = -np.where(rdiff < 1e-14)[1]-1
         return idx 
     def bc_id(self,bid):
-        return bid
+        return bid[0]
     
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         idx = -self.bc(X1,Y1) - 1
@@ -63,7 +64,6 @@ class Circles(Domain):
         points[:,:,0] = radii[:,None] * np.cos(angles)+self.centroids[idx,0][:,None]
         points[:,:,1] = radii[:,None] * np.sin(angles)+self.centroids[idx,1][:,None]
  
-        #ipdb.set_trace(context=21)
         return points 
         
 
