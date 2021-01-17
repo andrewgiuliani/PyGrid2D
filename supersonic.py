@@ -17,7 +17,8 @@ class Supersonic(Domain):
         R = np.sqrt( X**2 + Y**2)
         bval = np.logical_and( np.less_equal(self.R1 , R) , np.less_equal(R , self.R2) )
         return bval.astype(int)
-
+    def bc_id(self,bid):
+        return bid
     def bc(self,x,y):
         r = np.sqrt(x**2. +  y**2.)
         r1 = -1*(np.abs(r-self.R1) < 1e-14)
@@ -50,6 +51,3 @@ class Supersonic(Domain):
         points[:,:,1] = radii[:,None] * np.sin(angles)
         return points
         
-
-
-

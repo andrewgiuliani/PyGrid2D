@@ -21,7 +21,7 @@ class Blobs(Domain):
         Ro = 5
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
  
-
+        np.random.seed(2)
  #       ipdb.set_trace(context=21)
 #        self.centroids = 0.1 + 0.9 * np.random.rand( self.num_blobs,2  )
         self.modes_sin = np.random.rand( self.num_blobs, self.num_modes )
@@ -62,8 +62,7 @@ class Blobs(Domain):
         idx = -np.where(rdiff < 1e-14)[1]-1
         return idx 
     def bc_id(self,bid):
-        return -np.ones(bid.shape)
-  
+        return -1  
 
     def target_ratio(self, wgt, idx,R1, angle1, angle2, R3, angle3) :
         X1,Y1 = R1 * np.cos(angle1), R1* np.sin(angle1) 
