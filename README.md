@@ -77,5 +77,5 @@ Giuliani, Andrew and Berger, Marsha. "A state redistribution method for disconti
 
 
 ## References
-[1] Giuliani, Andrew and Berger, Marsha. "A state redistribution method for discontinuous Galerkin methods on curvilinear embedded boundary grids".
+[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids".
 
