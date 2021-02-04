@@ -25,7 +25,7 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 
 3. After these intersection points are computed, the cut cells are assembled.
 
-4. If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  For the Ringleb domain, this is done using the method of bisection.
+4. If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  Again, this is done using the method of bisection.
 
 5.  The cut cells are then written to file in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
 
