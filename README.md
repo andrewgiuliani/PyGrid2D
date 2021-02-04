@@ -1,4 +1,4 @@
-# PyGrid
+# PyGrid-2D
 
 This is a short Python code that generates two dimensional high order embedded boundary grids.  The code is fast, with most operations fully vectorized in Numpy.  There are a number of domains already implemented from [1], that include an annulus domain as well as the domain used in Ringleb flow.
 <p align="center">
