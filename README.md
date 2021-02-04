@@ -76,7 +76,7 @@ For help running the code, or any other questions, send me an email at
 ## Citing
 If you find this code useful in your work, you can cite it with
 
-Giuliani, Andrew and Berger, Marsha. "A state redistribution method for discontinuous Galerkin methods on curvilinear embedded boundary grids".
+Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids".
 
 ## 📓&nbsp; License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
