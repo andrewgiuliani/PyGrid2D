@@ -21,9 +21,9 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 ## How does it work?
 The cut cell grid is computed in three steps:
 
-1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the Cartesian grid points that lie in and out of the domain are determined.
+1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the regular grid points that lie in and out of the domain are determined.  For example, this is done in the figure below on the Ringleb domain.  The regular grid points that lie in the domain are shown in orange, while the regular grid points that are outside the domain are shown in black.
 
-2.  When a Cartesian grid point that lies outside the domain is adjacent another that is inside the domain, this means that between these two points, the embedded boundary crosses a Cartesian grid line.  Using the method of bisection, the precise point of intersection is computed.  Right now, the code assumes that there is only one point of intersection.
+2.  When a regular grid point that lies outside the domain is adjacent another that is inside the domain, this means that between these two points, the embedded boundary crosses a Cartesian grid line.  Using the method of bisection, the precise point of intersection is computed.  Right now, the code assumes that there is only one point of intersection.
 
 3. After these intersection points are computed, the cut cells are assembled.
 
@@ -32,8 +32,9 @@ The cut cell grid is computed in three steps:
 5.  The cut cells are then written to file, see the Output section for the output file format.
 
 <p align="center">
-  <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/gridgen.png" alt="annulus" width="300" > 
+  <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/gridgen.png" alt="annulus" width="600" > 
 </p>
+<p align="center"> <i> Regular grid points that lie inside and outside the domain are respectively orange and black, computed in step 1.  Irregular grid points on the embedded boundary are red, computed in step 2.</i> <p align="center">
 
 ## 🏗&nbsp; Grid generation
 
