@@ -27,7 +27,7 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 
 4. If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  For the Ringleb domain, this is done using the method of bisection.
 
-5.  The cut cells are then written to file, see the Output section for the output file format.
+5.  The cut cells are then written to file in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
 
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/gridgen.png" alt="annulus" width="600" > 
@@ -62,10 +62,6 @@ For example, the Ringleb domain can be generated and plotted by calling
 ```
 python PyGrid.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
 ```
-
-## Output
-
-PyGrid outputs the cut cell grid in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
 
 ## Dependencies
 For fancy command line output
