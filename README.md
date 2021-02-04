@@ -19,8 +19,6 @@ The goal of this work is to provide an easy to install, high order cut cell grid
 We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degenerecies, nor can it handle all types of cut cells.  
 
 ## How does it work?
-The cut cell grid is computed in three steps:
-
 1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the regular grid points that lie in and out of the domain are determined.  For example, this is done in the figure below on the Ringleb domain.  The regular grid points that lie in the domain are shown in orange, while the regular grid points that are outside the domain are shown in black.
 
 2.  When a regular grid point that lies outside the domain is adjacent another that is inside the domain, this means that between these two points, the embedded boundary crosses a Cartesian grid line.  Using the method of bisection, the precise point of intersection is computed.  Right now, the code assumes that there is only one point of intersection.
