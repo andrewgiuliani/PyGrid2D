@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from PyGrid-2D.PyGrid_exec import execPyGrid
+from PyGrid.PyGrid_exec import execPyGrid
 
 
 def load_vertices_elem(domain, Nx, Ny, q):
