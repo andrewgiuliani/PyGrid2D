@@ -10,7 +10,7 @@ class Blobs(Domain):
     bottom = 0
     top = 20.
     num_blobs = 5
-    num_modes = 3
+    num_modes = 7
     sx = 10
     sy = 10
     def __init__(self):
@@ -21,13 +21,15 @@ class Blobs(Domain):
         Ro = 5
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
  
-        np.random.seed(2)
+        np.random.seed(3)
  #       ipdb.set_trace(context=21)
 #        self.centroids = 0.1 + 0.9 * np.random.rand( self.num_blobs,2  )
-        self.modes_sin = np.random.rand( self.num_blobs, self.num_modes )
-        self.modes_cos = np.random.rand( self.num_blobs, self.num_modes )
-        
-        scale = np.array(  range(1,self.num_modes+1) ) 
+        self.modes_sin = (np.random.rand( self.num_blobs, self.num_modes )-0.5)*2.
+        self.modes_cos = (np.random.rand( self.num_blobs, self.num_modes )-0.5)*2.
+        print(self.modes_sin)
+        print(self.modes_cos)
+
+        scale = 1.2*np.array(  range(1,self.num_modes+1) ) 
         scale[0] = 1
         self.modes_sin[:,0] = 2
         self.modes_cos[:,0] = 2

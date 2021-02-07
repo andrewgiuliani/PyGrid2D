@@ -1,8 +1,8 @@
 import numpy as np
 import ipdb
 
-def output_ply(vertices, cells, cells_ij, domain, Nx, Ny):
-    f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+".ply", 'w')
+def output_ply(vertices, cells, domain, Nx, Ny, q):
+    f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'w')
     f.write("ply\n")
     f.write("format ascii 1.0\n")
     f.write("comment this file is a " +str(Nx)+"x"+str(Ny)+" " + domain.name + "\n")

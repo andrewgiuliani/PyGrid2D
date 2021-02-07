@@ -79,9 +79,9 @@ class Ringleb(Domain):
     
     def bc(self,x,y):
         k,q = self.xy2kq(x,y)
-        dk_min = -1*(np.abs(k-self.kmin) < 1e-14)
-        dk_max = -2*(np.abs(k-self.kmax) < 1e-14)
-        dq_min = -3*(np.abs(q-self.qmin) < 1e-14)
+        dk_min = -1*(np.abs(k-self.kmin) < 1e-13)
+        dk_max = -2*(np.abs(k-self.kmax) < 1e-13)
+        dq_min = -3*(np.abs(q-self.qmin) < 1e-13)
         
         sanity_check = np.logical_not(np.logical_xor(np.logical_xor(dk_min, dk_max), dq_min))
         num_wrong = np.sum(sanity_check)
