@@ -1,4 +1,4 @@
-# PyGrid
+# PyGrid-2D
 
 This is a short Python code that generates two dimensional high order embedded boundary grids.  The code is fast, with most operations fully vectorized in Numpy.  There are a number of domains already implemented from [1], that include an annulus domain as well as the domain used in Ringleb flow.
 <p align="center">
@@ -19,9 +19,20 @@ The goal of this work is to provide an easy to install, high order cut cell grid
 We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degenerecies, nor can it handle all types of cut cells.  
 
 ## How does it work?
-The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  The precise points of intersection along the Cartesian grid lines are computed using the method of bisection.  After these intersection points are computed, the cut cells are assembled and output in the `ply` data format.  
+1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the regular grid points that lie in and out of the domain are determined.  For example, this is done in the figure below on the Ringleb domain.  The regular grid points that lie in the domain are shown in orange, while the regular grid points that are outside the domain are shown in black.
 
-If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  For the Ringleb domain, this is done using the method of bisection.
+2.  When a regular grid point that lies outside the domain is adjacent another that is inside the domain, this means that between these two points, the embedded boundary crosses a Cartesian grid line.  Using the method of bisection, the precise point of intersection is computed.  On the Ringleb domain below, these points are plotted in red.  Right now, the code assumes that the boundary does not cross the grid line more than once.
+
+3. After these intersection points are computed, the cut cells are assembled.
+
+4. If the user requests curved edges, then additional vertices that are approximately uniformly spaced (in arclength) along the embedded boundary are computed.  For circular embedded boundaries, we have explicit formulae to accomplish this.  Again, this is done using the method of bisection.
+
+5.  The cut cells are then written to file in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
+
+<p align="center">
+  <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/gridgen.png" alt="annulus" width="600" > 
+</p>
+<p align="center"> <i> Regular grid points that lie inside and outside the domain are respectively orange and black, computed in step 1.  Irregular grid points on the embedded boundary are red, computed in step 2.</i> <p align="center">
 
 ## 🏗&nbsp; Grid generation
 
@@ -52,10 +63,6 @@ For example, the Ringleb domain can be generated and plotted by calling
 python PyGrid.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
 ```
 
-## Output
-
-PyGrid outputs the cut cell grid in the `.ply` format.  See here for more information http://paulbourke.net/dataformats/ply/.
-
 ## Dependencies
 For fancy command line output
 ```
@@ -69,7 +76,7 @@ For help running the code, or any other questions, send me an email at
 ## Citing
 If you find this code useful in your work, you can cite it with
 
-Giuliani, Andrew and Berger, Marsha. "A state redistribution method for discontinuous Galerkin methods on curvilinear embedded boundary grids".
+Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids".
 
 ## 📓&nbsp; License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -77,5 +84,5 @@ Giuliani, Andrew and Berger, Marsha. "A state redistribution method for disconti
 
 
 ## References
-[1] Giuliani, Andrew and Berger, Marsha. "A state redistribution method for discontinuous Galerkin methods on curvilinear embedded boundary grids".
+[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids".
 
