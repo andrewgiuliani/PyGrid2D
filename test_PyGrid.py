@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-import PyGrid_exec
+from PyGrid.PyGrid_exec import execPyGrid
 
 
 def load_vertices_elem(domain, Nx, Ny, q):
@@ -42,7 +42,7 @@ def load_vertices_elem(domain, Nx, Ny, q):
     (40,40,4,2)
 ])
 def test_PyGrid(Nx, Ny, q, bid):
-    vertices, elem, domain = PyGrid_exec.execPyGrid(Nx, Ny, False, q, bid)
+    vertices, elem, domain = execPyGrid(Nx, Ny, False, q, bid)
     vertices_loaded = load_vertices_elem(domain, Nx, Ny, q)
 
     err = np.linalg.norm(vertices - vertices_loaded)
