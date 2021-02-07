@@ -1,12 +1,10 @@
-import sys
-sys.path.append('..')
 import pytest
 import numpy as np
 from PyGrid_exec import execPyGrid
 
 
 def load_vertices_elem(domain, Nx, Ny, q):
-    f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'r')
+    f = open("tests/" + domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'r')
     line = f.readline()
     line = f.readline()
     line = f.readline()
