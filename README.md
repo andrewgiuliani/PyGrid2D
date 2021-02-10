@@ -21,7 +21,7 @@ The goal of this work is to provide an easy to install, high order cut cell grid
 </p>
 <p align="center"> <i>Zooms onto cut cells of the annulus and Ringleb meshes.  Cut cells can have either one (left) or two curved edges (right).  Cut cells with two curved edges can occur on sharp corners of the embedded boundary.</i> <p align="center">
   
-We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degenerecies, nor can it handle all types of cut cells.  
+We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degeneracies, nor can it handle all types of cut cells.  
 
 ## How does it work?
 1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the regular grid points that lie in and out of the domain are determined.  For example, this is done in the figure below on the Ringleb domain.  The regular grid points that lie in the domain are shown in orange, while the regular grid points that are outside the domain are shown in black.
