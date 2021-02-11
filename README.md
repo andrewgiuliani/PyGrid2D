@@ -89,5 +89,5 @@ Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on
 
 
 ## References
-[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids".
+[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids". [https://arxiv.org/abs/2005.05734](https://arxiv.org/abs/2005.05734)
 
