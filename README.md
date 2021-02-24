@@ -67,7 +67,7 @@ Additionally, the code does not robustly (or gracefully) handle mesh degeneracie
 </p>
 <p align="center"> <i> A square domain (black lines) is removed from the background grid (blue lines), where the domain is perfectly aligned with the Cartesian grid lines. </i> <p align="center">
   
-We do not support the above scenarios for code simplicity, however, they must be addressed when moving to three dimensions and complex engineering geometries.
+We do not support the above scenarios for code simplicity, however, they must be addressed when moving to three dimensions and complex engineering geometries.  This is the reason that the dimensions of some of the background grids in [1] are slighly perturbed from round numbers, as we aimed to avoid any of the above scenarios.
 
 ## 🏗&nbsp; Grid generation
 
