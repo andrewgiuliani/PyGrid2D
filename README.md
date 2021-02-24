@@ -23,6 +23,12 @@ The goal of this work is to provide an easy to install, high order cut cell grid
   
 We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degeneracies, nor can it handle all types of cut cells.  
 
+<p align="center">
+  <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/blobs.png" alt="blobs" width="500" >  
+</p>
+<p align="center"> <i> Complex curved embedded boundaries are also supported.  Here we embedded five `blobs' and request three interpolation points per cut cell edge (<a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;q&space;=&space;2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;q&space;=&space;2" title="q = 2" /></a>).</i> <p align="center">
+
+
 ## How does it work?
 1. The user provides a function, `in_domain`, that maps a spatial coordinate (x,y) to 1 if the point lies inside the domain or 0 if it does not.  Using this function, the regular grid points that lie in and out of the domain are determined.  For example, this is done in the figure below on the Ringleb domain.  The regular grid points that lie in the domain are shown in orange, while the regular grid points that are outside the domain are shown in black.
 
