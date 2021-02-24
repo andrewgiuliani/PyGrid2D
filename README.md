@@ -40,13 +40,15 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 <p align="center"> <i> Regular grid points that lie inside and outside the domain are respectively orange and black, computed in step 1.  Irregular grid points on the embedded boundary are red, computed in step 2.</i> <p align="center">
   
 ## 🌲🌳&nbsp; Into the weeds on curved edges
-If curved boundaries are requested, the code computes interpolation points that are approximately equispaced in arclength using the method of bisection.  This approach relies on a one-dimensional parametrization of the boundary <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\Gamma(s)&space;:&space;s&space;\rightarrow&space;(x(s),y(s))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\Gamma(s)&space;:&space;s&space;\rightarrow&space;(x(s),y(s))" title="\Gamma(s) : s \rightarrow (x(s),y(s))" /></a>
+If curved boundaries are requested, the code computes interpolation points that are approximately equispaced in arclength using the method of bisection.  This approach relies on a one-dimensional parametrization of the boundary  <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\Gamma(s)&space;:&space;s&space;\rightarrow&space;(x(s),y(s))" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\Gamma(s)&space;:&space;s&space;\rightarrow&space;(x(s),y(s))" title="\Gamma(s) : s \rightarrow (x(s),y(s))" /></a>
 
 Say that a cut cell's curved edge defined by the set of points <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;s&space;\in&space;[s_1,s_2]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;s&space;\in&space;[s_1,s_2]" title="s \in [s_1,s_2]" /></a>.
 
 Define the function
+
 <a href="https://www.codecogs.com/eqnedit.php?latex=f(s)&space;=&space;\frac{||\Gamma(s)&space;-&space;\Gamma(s_1))||_2}{||\Gamma(s_2)-\Gamma(s_1)||_2}-w" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(s)&space;=&space;\frac{||\Gamma(s)&space;-&space;\Gamma(s_1))||_2}{||\Gamma(s_2)-\Gamma(s_1)||_2}-w" title="f(s) = \frac{||\Gamma(s) - \Gamma(s_1))||_2}{||\Gamma(s_2)-\Gamma(s_1)||_2}-w" /></a>
-for some <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;w&space;\in&space;[0,1]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;w&space;\in&space;[0,1]" title="w \in [0,1]" /></a>
+
+for some <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;w&space;\in&space;[0,1]" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;w&space;\in&space;[0,1]" title="w \in [0,1]" /></a>.  This function is zero when s maps to a point that is exactly <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;w&space;||&space;\Gamma(s_2)&space;-&space;\Gamma(s_1)||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;w&space;||&space;\Gamma(s_2)&space;-&space;\Gamma(s_1)||_2" title="w || \Gamma(s_2) - \Gamma(s_1)||_2" /></a> units away from <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\Gamma(s_1)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\Gamma(s_1)" title="\Gamma(s_1)" /></a>.
 
 ## 🔪&nbsp; The sharp bits
 This code only handles cut cells on which the boundary enters and leaves on different faces.  As a result, it cannot deal with tunneled and split cells for the moment.  If these scenarios are detected, the code returns an error.  
