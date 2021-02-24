@@ -344,7 +344,7 @@ def execPyGrid(Nx, Ny, plot_flag, q, bid):
         pm.plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
     
 #    out.output_ply(vertices, cell_list, cell_ij, domain, Nx, Ny)
-#    out.output_ag( vertices, cell_list, cell_ij, vertex_count,  ncf,domain, Nx, Ny, q ,  vertex_idx, vert_in)
+    out.output_ag( vertices, cell_list, cell_ij, vertex_count,  ncf,domain, Nx, Ny, q ,  vertex_idx, vert_in)
     
     return vertices, cell_list, domain
 #ipdb.set_trace(context=21)
