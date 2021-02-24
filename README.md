@@ -40,14 +40,20 @@ We do not allow split or tunneled cells for ease of code development.  This mesh
 <p align="center"> <i> Regular grid points that lie inside and outside the domain are respectively orange and black, computed in step 1.  Irregular grid points on the embedded boundary are red, computed in step 2.</i> <p align="center">
 
 ## 🔪&nbsp; The sharp bits
-This code only handles cut cells on which the boundary enters and leaves on different faces.  As a result, it cannot deal with tunneled and split cells for the moment.  If this is detected, then the code returns an error.  
+This code only handles cut cells on which the boundary enters and leaves on different faces.  As a result, it cannot deal with tunneled and split cells for the moment.  If these scenarios are detected, the code returns an error.  
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/tunneled.png" alt="tunneled" width="250" > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/split.png" alt="split" width="250" >
 </p>
-<p align="center"> <i> </i> <p align="center">
-Additionally, the code does not robustly (or gracefully) handle mesh degeneracies.  For example, the behaviour of the code is if the embedded geometry lies directly on a Cartesian grid line cell, the code will produce erroneous output and may, or may not output an error.
+<p align="center"> <i> On the left, the annulus domain is removed from the background grid, creating tunneled cut cells.  On the right, the complement of the annulus is removed from the background grid, creating split cut cells. </i> <p align="center">
+  
+Additionally, the code does not robustly (or gracefully) handle mesh degeneracies.  For example, if the embedded geometry lies directly on a Cartesian grid line cell, the code will produce erroneous output and may, or may not output an error.
 
+<p align="center">
+  <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/aligned.png" alt="aligned" width="250" > 
+</p>
+<p align="center"> <i> A square domain (black lines) is removed from the background grid (blue lines), where the domain is perfectly aligned with the Cartesian grid lines. </i> <p align="center">
+  
 We do not support the above scenarios for code simplicity, however, they must be addressed when moving to three dimensions and complex engineering geometries.
 
 ## 🏗&nbsp; Grid generation
