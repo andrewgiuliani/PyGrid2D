@@ -97,9 +97,9 @@ class Ringleb(Domain):
         X3,Y3 =  self.kq2xy(k3,q3)
         
         l1 = np.sqrt( (X3-X2)**2. + (Y3-Y2)**2. )
-        l3 = np.sqrt( (X3-X1)**2. + (Y3-Y1)**2. )
+        l3 = np.sqrt( (X2-X1)**2. + (Y2-Y1)**2. )
         
-        return l1/l3 - wgt
+        return l1/(l1+l3) - wgt
         
 
     def curved_points(self,wgt,X1,Y1,X2,Y2):
