@@ -21,7 +21,7 @@ The goal of this work is to provide an easy to install, high order cut cell grid
 </p>
 <p align="center"> <i>Zooms onto cut cells of the annulus and Ringleb meshes.  Cut cells can have either one (left) or two curved edges (right).  Cut cells with two curved edges can occur on sharp corners of the embedded boundary.</i> <p align="center">
   
-We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degeneracies, nor can it handle all types of cut cells.   The code supports complex curved embedded boundaries (illustrated below), provided that it has a functional representation.
+The code supports complex curved embedded boundaries (illustrated below), provided that it has a functional representation.  We do not allow split or tunneled cells for ease of code development.  This mesh generator does not handle mesh degeneracies, nor can it handle all types of cut cells, see the section entitled <i> The sharp bits </i> below for more information on the codes limitations.   
 
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/blobs.png" alt="blobs" width="500" >  
