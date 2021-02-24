@@ -21,7 +21,7 @@ class Blobs(Domain):
         Ro = 5
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
  
-        np.random.seed(3)
+        np.random.seed(1)
  #       ipdb.set_trace(context=21)
 #        self.centroids = 0.1 + 0.9 * np.random.rand( self.num_blobs,2  )
         self.modes_sin = (np.random.rand( self.num_blobs, self.num_modes )-0.5)*2.

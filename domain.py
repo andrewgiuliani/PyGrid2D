@@ -31,6 +31,7 @@ class Domain:
          
             
     def compute_corner(self, edges, vertices, q):
+        
         X1 = vertices[edges[:,0], 0]
         Y1 = vertices[edges[:,0], 1]
         X2 = vertices[edges[:,1], 0]
