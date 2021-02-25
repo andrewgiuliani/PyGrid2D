@@ -117,7 +117,7 @@ For help running the code, or any other questions, send me an email at
 ## Citing
 If you find this code useful in your work, you can cite it with
 
-Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids". [https://arxiv.org/abs/2005.05734](https://arxiv.org/abs/2005.05734)
+Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids". [https://arxiv.org/abs/2102.01857](https://arxiv.org/abs/2005.05734)
 
 ## 📓&nbsp; License
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -125,5 +125,5 @@ Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on
 
 
 ## References
-[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids". [https://arxiv.org/abs/2005.05734](https://arxiv.org/abs/2005.05734)
+[1] Giuliani, Andrew. "A two-dimensional stabilized discontinuous Galerkin method on curvilinear embedded boundary grids". [https://arxiv.org/abs/2102.01857](https://arxiv.org/abs/2005.05734)
 
