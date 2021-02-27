@@ -59,7 +59,7 @@ Note that <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\Gam
 Note that this is not a fully robust approach to determining interpolation points on the embedded boundary and is only appropriate when the boundary is sufficiently well-resolved.
 
 ## 🔪&nbsp; The sharp bits
-This code only handles cut cells on which the boundary enters and leaves on different faces.  Additionally, it cannot deal with tunnelled and split cells.  If these scenarios are detected, the code returns an error.  
+This code only handles cut cells on which the boundary enters and leaves on different faces. Additionally, it cannot deal with tunnelled and split cells. If these scenarios are detected, the code signals this, and returns an error code.  It may be added in the future, and of course in 3D for real geometries this would be necessary.
 <p align="center">
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/split.png" alt="split" width="250" > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/tunneled.png" alt="tunneled" width="250" >
