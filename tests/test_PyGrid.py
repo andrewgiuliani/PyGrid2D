@@ -4,7 +4,7 @@ import pygrid2d as pg2d
 
 
 def load_vertices_elem(domain, Nx, Ny, q):
-    f = open("data/" + domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'r')
+    f = open("./data/" + domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'r')
     line = f.readline()
     line = f.readline()
     line = f.readline()
