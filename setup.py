@@ -9,7 +9,7 @@ __version__ = '0.0.1'
 setup(
     name='PyGrid2D',
     long_description='',
-    install_requires=['numpy', 'scipy', 'argparse', 'matplotlib', 'pytest'],
+    install_requires=['numpy', 'scipy', 'argparse', 'matplotlib', 'pytest', 'rich'],
     packages = ["pygrid2d"],
     package_dir = {"pygrid2d": "pygrid2d"},
     zip_safe=False,
