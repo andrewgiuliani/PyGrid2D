@@ -1,7 +1,7 @@
 # PyGrid-2D
 
 
-![build-and-test-status](https://github.com/andrewgiuliani/PyGrid-2D/workflows/Build%20&%20Test/badge.svg)
+![CI](https://github.com/andrewgiuliani/PyGrid-2D/workflows/CI/badge.svg)
 
 
 
