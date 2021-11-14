@@ -1,30 +1,23 @@
 import numpy as np
-import ipdb
 import sys
 import argparse
-import bisection as bs
-import plot_mesh as pm
-import output as out
-
-
-from domain import Domain
-from ringleb import Ringleb
-from annulus import Annulus
-from annulus_acoustics import Annulus_acoustics
-from supersonic import Supersonic
-from blobs import Blobs
-from circles import Circles
-from channel import Channel
-
-import ipdb
+from .bisection import *
+from .plot_mesh import *
+from .output import *
+from .domain import Domain
+from .ringleb import Ringleb
+from .annulus import Annulus
+from .annulus_acoustics import Annulus_acoustics
+from .supersonic import Supersonic
+from .blobs import Blobs
+from .circles import Circles
+from .channel import Channel
 from rich.console import Console
 from rich.table import Column, Table
 
-def execPyGrid(Nx, Ny, plot_flag, q, bid):
+def PyGrid2D(Nx, Ny, plot_flag, q, bid):
 
     console = Console()
-    
-    
     
     if bid == 0:
         domain = Annulus()
@@ -85,12 +78,12 @@ def execPyGrid(Nx, Ny, plot_flag, q, bid):
     console.print("Computing the x-intersections...", style="bold blue")
     xh1 = XX[h_idx[0]  , h_idx[1]]
     xh2 = XX[h_idx[0]+1, h_idx[1]]
-    xh  = bs.bisection(xh1, xh2, lambda xin : (domain.in_domain(xin,YY[h_idx])-0.5) )  
+    xh  = bisection(xh1, xh2, lambda xin : (domain.in_domain(xin,YY[h_idx])-0.5) )  
     
     console.print("Computing the y-intersections...", style="bold blue")
     yv1 = YY[v_idx]
     yv2 = YY[v_idx[0], v_idx[1]+1]
-    yv  = bs.bisection(yv1, yv2, lambda yin : (domain.in_domain(XX[v_idx],yin)-0.5) )  
+    yv  = bisection(yv1, yv2, lambda yin : (domain.in_domain(XX[v_idx],yin)-0.5) )  
     
     whole_idx = np.where(irr)
     cut_idx   = np.where(cuts)
@@ -341,12 +334,6 @@ def execPyGrid(Nx, Ny, plot_flag, q, bid):
     # reorder vertices counterclockwise
     if plot_flag:
         console.print("Plotting...", style="bold blue")
-        pm.plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
-    
-#    out.output_ply(vertices, cell_list, cell_ij, domain, Nx, Ny)
-    out.output_ag( vertices, cell_list, cell_ij, vertex_count,  ncf,domain, Nx, Ny, q ,  vertex_idx, vert_in)
+        plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
     
     return vertices, cell_list, domain
-#ipdb.set_trace(context=21)
-
-

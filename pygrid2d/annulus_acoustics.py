@@ -1,6 +1,5 @@
 import numpy as np
-from domain import Domain
-import ipdb
+from .domain import Domain
 
 class Annulus_acoustics(Domain):
     

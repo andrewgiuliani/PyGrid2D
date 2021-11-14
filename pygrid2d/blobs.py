@@ -1,7 +1,6 @@
 import numpy as np
-from domain import Domain
-import bisection as bs
-import ipdb
+from .domain import Domain
+from .bisection import *
 
 class Blobs(Domain):
     name = 'blobs'
@@ -98,7 +97,7 @@ class Blobs(Domain):
         
         points = np.zeros( (X1.shape[0], wgt.size, 2) )
         for qq in range(wgt.size):
-            angle3 = bs.bisection( angle1, angle2, lambda qin : self.target_ratio(wgt[qq], idx,R1, angle1, qin, R2, angle2) )
+            angle3 = bisection( angle1, angle2, lambda qin : self.target_ratio(wgt[qq], idx,R1, angle1, qin, R2, angle2) )
 #            ipdb.set_trace(context=21)
             
             ntheta = np.array( range(self.num_modes) )[None,:] * angle3[:,None]

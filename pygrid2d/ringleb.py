@@ -1,7 +1,6 @@
 import numpy as np
-import bisection as bs
-from domain import Domain
-import ipdb
+from .domain import Domain
+from .bisection import *
 
 class Ringleb(Domain):
     gamma = 1.4
@@ -37,7 +36,7 @@ class Ringleb(Domain):
         clow =.5*np.ones(x.size)
         chigh = 0.9999*np.ones(x.size)
         
-        c  = bs.bisection(clow, chigh, lambda cin : self.eqn(np.ravel(x),np.ravel(y),cin) )  
+        c  = bisection(clow, chigh, lambda cin : self.eqn(np.ravel(x),np.ravel(y),cin) )  
         return c.reshape(x.shape)
    
     def kq2xy(self, k, q):
@@ -118,7 +117,7 @@ class Ringleb(Domain):
             idx1 = np.where( bc1 == -1 )[0]
             k1,q1 = self.xy2kq(X1[idx1], Y1[idx1])
             k3,q3 = self.xy2kq(X2[idx1], Y2[idx1])
-            q2 = bs.bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmin, q1, 
+            q2 = bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmin, q1, 
                                                                                self.kmin, qin,
                                                                                self.kmin, q3 ) )
             x2,y2 = self.kq2xy(self.kmin,q2)
@@ -129,7 +128,7 @@ class Ringleb(Domain):
             idx2 = np.where( bc1 == -2)[0]
             k1,q1 = self.xy2kq(X1[idx2], Y1[idx2])
             k3,q3 = self.xy2kq(X2[idx2], Y2[idx2])
-            q2 = bs.bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmax, q1, 
+            q2 = bisection( q1, q3, lambda qin : self.target_ratio(wgt[qq], self.kmax, q1, 
                                                                                self.kmax, qin,
                                                                                self.kmax, q3 ) )
 
@@ -142,7 +141,7 @@ class Ringleb(Domain):
             idx3 = np.where( bc1 == -3)[0]
             k1,q1 = self.xy2kq(X1[idx3], Y1[idx3])
             k3,q3 = self.xy2kq(X2[idx3], Y2[idx3])
-            k2 = bs.bisection( k1, k3, lambda kin : self.target_ratio(wgt[qq], k1 , self.qmin, 
+            k2 = bisection( k1, k3, lambda kin : self.target_ratio(wgt[qq], k1 , self.qmin, 
                                                                                kin, self.qmin,
                                                                                k3 , self.qmin ) )
 

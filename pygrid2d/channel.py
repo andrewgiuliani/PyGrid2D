@@ -1,44 +1,35 @@
 import numpy as np
-from domain import Domain
-import ipdb
+from .domain import Domain
 
-class Circles(Domain):
-    name = 'circles'
+class Channel(Domain):
+    name = 'channel'
     left = 0
-    right = 20.
+    right = 5.
     bottom = 0
-    top = 20.
-    sx = 10
-    sy = 10
+    top = 5.
     num_blobs = 5
     
-    def __init__(self):
-        theta = np.linspace( 0, 2 * np.pi, self.num_blobs+1)[:,None]
-        theta = theta[:-1]-3*np.pi/2
-        Ro = 5
-        self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
-        self.num_blobs = self.centroids.shape[0]
-        self.Ri = 2*np.ones ((1,self.num_blobs) )
-#        ipdb.set_trace(context=21)
+#    def __init__(self):
 
 
     def in_domain(self, X,Y):
         Xp = X.ravel() 
         Yp = Y.ravel() 
-#        ipdb.set_trace(context=21)
-        R = np.sqrt( (Xp[:,None] - self.centroids[None,:,0])**2 + (Yp[:,None] - self.centroids[None,:,1])**2)
-        theta = np.arctan2(Yp[:,None] - self.centroids[:,1], Xp[:,None] - self.centroids[:,0])
-        
-        bval = np.logical_not(np.sum(R <= self.Ri, axis = 1) > 0)
+        x1 = 6*5/30 + 0.5*5/30
+        y1 = 0
+        s1 = 1.
+
+        x2 = 0
+        y2 = 6*5/30 + 0.5*5/30
+        s2 = 1.
+
+        d1 =  -s1 * (Xp-x1) + (Yp-y1)
+        d2 =  -s2 * (Xp-x2) + (Yp-y2)
+        bval = np.logical_and( d1 > 0 , d2 < 0 ) 
         return bval.astype(int).reshape( X.shape )
 
     def bc(self,x,y):
-        Xp = x.ravel() 
-        Yp = y.ravel() 
-
-        rdiff = np.sqrt( (Xp[:,None]-self.centroids[:,0])**2. +  (Yp[:,None]-self.centroids[:,1])**2.)-self.Ri
-        bools = rdiff < 1e-14
-        idx = -np.where(rdiff < 1e-14)[1]-1
+        idx = -np.ones( (x.size) ).astype(int)
         return idx 
     def bc_id(self,bid):
         return bid[0]
