@@ -18,13 +18,11 @@ class Circles(Domain):
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
         self.num_blobs = self.centroids.shape[0]
         self.Ri = 2*np.ones ((1,self.num_blobs) )
-#        ipdb.set_trace(context=21)
 
 
     def in_domain(self, X,Y):
         Xp = X.ravel() 
         Yp = Y.ravel() 
-#        ipdb.set_trace(context=21)
         R = np.sqrt( (Xp[:,None] - self.centroids[None,:,0])**2 + (Yp[:,None] - self.centroids[None,:,1])**2)
         theta = np.arctan2(Yp[:,None] - self.centroids[:,1], Xp[:,None] - self.centroids[:,0])
         

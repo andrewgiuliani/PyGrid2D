@@ -21,8 +21,6 @@ class Blobs(Domain):
         self.centroids = np.hstack( (Ro * np.cos(theta)+self.sx, Ro*np.sin(theta)+self.sy ) ) 
  
         np.random.seed(1)
- #       ipdb.set_trace(context=21)
-#        self.centroids = 0.1 + 0.9 * np.random.rand( self.num_blobs,2  )
         self.modes_sin = (np.random.rand( self.num_blobs, self.num_modes )-0.5)*2.
         self.modes_cos = (np.random.rand( self.num_blobs, self.num_modes )-0.5)*2.
         print(self.modes_sin)
@@ -98,7 +96,6 @@ class Blobs(Domain):
         points = np.zeros( (X1.shape[0], wgt.size, 2) )
         for qq in range(wgt.size):
             angle3 = bisection( angle1, angle2, lambda qin : self.target_ratio(wgt[qq], idx,R1, angle1, qin, R2, angle2) )
-#            ipdb.set_trace(context=21)
             
             ntheta = np.array( range(self.num_modes) )[None,:] * angle3[:,None]
             R3 =  np.sum(self.modes_sin[idx,:] * np.sin(ntheta) + self.modes_cos[idx,:] * np.cos(ntheta), axis = 1)
@@ -112,26 +109,3 @@ class Blobs(Domain):
         return points 
  
 
-
-
-#    def curved_points(self,wgt,X1,Y1,X2,Y2):
-#        ipdb.set_trace(context=21)
-#        idx = -self.bc(X1,Y1) - 1
-#
-#        radii = self.Ri[ 0, idx ]
-#        angle1 = np.arctan2( Y1-self.centroids[idx,1], X1-self.centroids[idx,0] )
-#        angle3 = np.arctan2( Y2-self.centroids[idx,1], X2-self.centroids[idx,0] )
-#        
-#       
-#        idx_jump = np.where(angle3-angle1 >   np.pi )
-#        angle1[idx_jump] = angle1[idx_jump] + 2.* np.pi
-#        idx_jump = np.where(angle3-angle1 <  -np.pi )
-#        angle3[idx_jump] = angle3[idx_jump] + 2.* np.pi
-#
-#
- 
-#        return points 
-#        
-#
-#
-#

@@ -49,7 +49,6 @@ class Annulus_acoustics(Domain):
         angle1 = np.arctan2( Y1-self.sy, X1-self.sx )
         angle2 = np.arctan2( Y2-self.sy, X2-self.sx )
         
-#        ipdb.set_trace(context=21)
        
         idx_jump = np.where(angle2-angle1 >   np.pi )
         angle1[idx_jump] = angle1[idx_jump] + 2.* np.pi

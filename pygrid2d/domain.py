@@ -1,5 +1,4 @@
 import numpy as np
-import ipdb
 class Domain:
 
     def is_corner(self, irreg_edges, vertices):

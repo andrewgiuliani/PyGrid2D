@@ -214,7 +214,6 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
     cell_ij = [whole_idx] + cell_list_idx
     ncf = [0] + [1] * len(cut_cells)
     
-    #        ipdb.set_trace(context=21)
     
     console.print("Computing the curved and corner boundaries...", style="bold blue")
     corners_flag = domain.is_corner(irreg_edges, vertices)
@@ -228,7 +227,6 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
     corner_vertex_count = [ v for v in vertex_count]
     # remove the corner cells
     for c in range(1,len(cell_list)):
-        #ipdb.set_trace(context=21)
         idx = np.where( cut_nv == vertex_count[c] )[0]
         
         keep = np.where(np.logical_not(corners_flag[idx]))[0]

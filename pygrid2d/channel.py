@@ -1,6 +1,5 @@
 import numpy as np
 from .domain import Domain
-import ipdb
 
 class Channel(Domain):
     name = 'channel'

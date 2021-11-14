@@ -1,5 +1,4 @@
 import numpy as np
-import ipdb
 
 def output_ply(vertices, cells, domain, Nx, Ny, q):
     f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'w')
