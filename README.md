@@ -108,10 +108,10 @@ For example, the Ringleb domain can be generated and plotted by calling
 ./examples/8_argrun/driver.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
 ```
 
-## Dependencies
-For fancy command line output
+## Installation
+To install, navigate to the cloned github repository, and call
 ```
-pip install rich
+pip install -e .
 ```
 
 ## Contact
