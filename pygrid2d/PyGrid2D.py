@@ -12,6 +12,7 @@ from .supersonic import Supersonic
 from .blobs import Blobs
 from .circles import Circles
 from .channel import Channel
+from .doublemach import DoubleMach
 from rich.console import Console
 from rich.table import Column, Table
 
@@ -33,7 +34,8 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
         domain = Circles()
     elif bid == 6:
         domain = Channel()
-    
+    elif bid == 7:
+        domain = DoubleMach()
     else:
         quit()
     
