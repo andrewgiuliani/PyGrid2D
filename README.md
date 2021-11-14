@@ -105,7 +105,7 @@ add curved edges on the cut cells with q+1 interpolation points with the embedde
 
 For example, the Ringleb domain can be generated and plotted by calling
 ```
-python PyGrid.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
+./examples/8_argrun/driver.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
 ```
 
 ## Dependencies
