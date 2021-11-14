@@ -2,6 +2,16 @@
 import argparse
 import pygrid2d as pg2d
 
+## this driver lets you generate grids using the command line.  For example:
+## ./driver.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
+## generates a 10x10 grid on the Ringleb flow domain (fbody=2) with 4 interpolation points
+## along the curved boundary, and plots it.  You can
+## avoid plotting by removing the -plot command line option:
+## ./driver.py -Nx 10 -Ny 10 -fbody 2 -q 3
+
+
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-Nx", "--Nx", type=int, help="number of elements in x-direction")
 parser.add_argument("-Ny", "--Ny", type=int, help="number of elements in y-direction")
