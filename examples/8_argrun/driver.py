@@ -1,6 +1,6 @@
+#!/usr/bin/env python3
 import argparse
-import output as out
-from PyGrid_exec import execPyGrid
+import pygrid2d as pg2d
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-Nx", "--Nx", type=int, help="number of elements in x-direction")
@@ -15,5 +15,5 @@ plot_flag = args.PLOT
 q = args.Q
 bid = args.fbody
 
-vertices, cell_list, domain = execPyGrid(Nx, Ny, plot_flag, q, bid)
-out.output_ply(vertices, cell_list, domain, Nx, Ny, q)
+vertices, cell_list, domain = pg2d.PyGrid2D(Nx, Ny, plot_flag, q, bid)
+pg2d.output_ply(vertices, cell_list, domain, Nx, Ny, q)
