@@ -77,7 +77,7 @@ We do not support the above scenarios for code simplicity, however, they must be
 
 ## 🏗&nbsp; Grid generation
 
-The different arguments that `PyGrid.py` accepts are explained below:
+The different arguments that `./examples/8_argrun/driver.py` accepts are explained below:
 
 
 -Nx
@@ -89,9 +89,13 @@ number of cells on the grid in the y-direction
 -fbody
 the ID of the embedded boundary to be used.
 * `0`: quarter annulus, for the supersonic vortex problem,
-* `1`: annulus,
+* `1`: annulus for rotating pulse problem,
 * `2`: Ringleb,
 * `3`: random blobs.
+* `4`: annulus for acoustics problem,
+* `5`: circular obstacles,
+* `6`: channel,
+* `7`: double Mach.
 
 -plot
 display the generated cut cell grid
