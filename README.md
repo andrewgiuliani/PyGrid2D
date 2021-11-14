@@ -11,6 +11,13 @@ This is a short Python code that generates two dimensional high order embedded b
   <img src="https://github.com/andrewgiuliani/PyGrid/blob/main/images/ringleb.png" alt="annulus" width="300" >
 </p>
 <p align="center"> <i>High order embedded boundary annulus (left) and Ringleb (right) domains.  Each curved boundary segment has q+1 boundary points (red dots), where q = 3.</i> <p align="center">
+
+
+## Installation
+To install, navigate to the cloned github repository, and call
+```
+pip install -e .
+```
   
 ## Goal
 The goal of this work is to provide an easy to install, high order cut cell grid generator for simple boundary geometries that have a functional representation. PyGrid assumes that each cut cell has only one or two, possibly curved, edges associated to the embedded boundary. 
@@ -106,12 +113,6 @@ add curved edges on the cut cells with q+1 interpolation points with the embedde
 For example, the Ringleb domain can be generated and plotted by calling
 ```
 ./examples/8_argrun/driver.py -Nx 10 -Ny 10 -fbody 2 -q 3 -plot
-```
-
-## Installation
-To install, navigate to the cloned github repository, and call
-```
-pip install -e .
 ```
 
 ## Contact
