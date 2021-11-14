@@ -1,7 +1,6 @@
 from matplotlib import collections  as mc
 from matplotlib.collections import LineCollection
 import numpy as np
-import ipdb
 import matplotlib.pyplot as plt
 
 
