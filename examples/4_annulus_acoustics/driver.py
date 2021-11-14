@@ -5,7 +5,7 @@ Nx = 26
 Ny = 26
 plot_flag = True
 q = 5   # q = 5 means the mesh generator will compute 6 points on the embedded boundary, resulting in a degree 5 polynomial boundary interpolant
-bid = 4 # bodyID = 2 means Ringleb domain
+bid = 4 # bodyID = 2 means the acoustics annulus domain
 
 vertices, cell_list, domain = pg2d.PyGrid2D(Nx, Ny, plot_flag, q, bid)
 pg2d.output_ply(vertices, cell_list, domain, Nx, Ny, q)
