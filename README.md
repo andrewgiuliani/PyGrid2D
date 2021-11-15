@@ -1,4 +1,4 @@
-# PyGrid-2D
+# PyGrid2D
 
 
 ![CI](https://github.com/andrewgiuliani/PyGrid-2D/workflows/CI/badge.svg)
