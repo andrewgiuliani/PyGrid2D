@@ -20,6 +20,28 @@ def output_ply(vertices, cells, domain, Nx, Ny, q):
 
     f.close()
 
+def output_unstructured(vertices, mesh_data, face_data, domain, Nx, Ny, q):
+    tot_elem = len(mesh_data)
+    tot_face = len(face_data)
+    
+    f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".unstr", 'w')
+    f.write("vertices " + str(vertices.shape[0]) + "\n")
+    np.savetxt(f,vertices)
+    
+    f.write("cells " + str(tot_elem) + "\n")
+    for c in mesh_data:
+        np.savetxt(f, c['fidx'].reshape((1,-1)), fmt='%i')
+
+    f.write("faces " + str(tot_face) + "\n")
+    for face in face_data:
+        np.savetxt(f, np.array(face['vertices']).reshape((1,-1)), fmt='%i')
+
+    f.write("faces left right " + str(tot_face) + "\n")
+    for face in face_data:
+        np.savetxt(f, np.array(face['lr']).reshape((1,-1)), fmt='%i')
+
+
+
 def output_ag(vertices, cells, cells_ij, nv, ncf, domain, Nx, Ny, q, vertex_idx, vert_in):
     
     irr = -np.ones( (Nx, Ny) ).astype(int)

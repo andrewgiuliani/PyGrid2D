@@ -238,10 +238,10 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
         
         cell_list[c] = cell_list[c][keep, :]
         cell_ij[c] = (cell_ij[c][0][keep],cell_ij[c][1][keep])
-    
+
     cut_nv = cut_nv[regular_idx]
     
-    
+
     if q > 1:
         # compute regular high order edges
         new_vertices, new_cells = domain.compute_curved(irreg_edges[regular_idx,:], vertices,q)
@@ -252,9 +252,11 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
             idx = np.where( cut_nv == vertex_count[c] )[0]
             cell_list[c] = np.hstack( (cell_list[c], new_cells[idx,:]) ) 
             vertex_count[c] = vertex_count[c] + q-1
-        
-    
-    
+
+
+
+
+   
     if np.sum(corners_flag) > 0 :
         # deal with the corners
     
@@ -273,14 +275,82 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
             corner_cell_list[c] = np.hstack( (corner_cell_list[c], new_cells[count:count + idx,:]) ) 
             corner_vertex_count[c] = corner_cell_list[c].shape[1]
             count = count + idx
-            
-    
     
         # append corner bins
         cell_list = cell_list + corner_cell_list
         vertex_count = vertex_count + corner_vertex_count
         cell_ij = cell_ij + corner_cell_ij
         ncf = ncf + len(corner_cell_list) * [2] 
+
+
+    # cell_list - bins of cells
+    # vertex_count - number of vertices of cells in each bin
+    # ncf - number of irregular faces associated to cells in each bin
+    
+    mesh_data = []
+    for c, num_curved_faces in zip(cell_list, ncf):
+        for idx in range(c.shape[0]):
+            faces = []
+            
+            if num_curved_faces == 0:
+                for vidx in range(c.shape[1]):
+                    v1 = min([c[idx,vidx], c[idx,(vidx+1)%4]]) 
+                    v2 = max([c[idx,vidx], c[idx,(vidx+1)%4]]) 
+                    faces.append((v1,v2))
+            else:
+                num_extra = (q-1)*num_curved_faces+(num_curved_faces-1)
+                final_vidx = c.shape[1]-num_extra
+
+                for vidx in range(final_vidx-1):
+                    v1=min([c[idx,vidx], c[idx,vidx+1]])
+                    v2=max([c[idx,vidx], c[idx,vidx+1]])
+                    faces.append( (v1, v2) )
+                
+                vertices_extra = list(c[idx,final_vidx-1:]) + [c[idx,0]]
+                v1 = 0
+                v2 =q+1
+                for fidx in range(num_curved_faces):
+                    faces.append( tuple(vertices_extra[v1:v2]) )
+                    v1 = v2-1
+                    v2 = v1 + q+1
+            mesh_data.append({'vertices': c[idx,:], 'num_curved_faces': num_curved_faces, 'faces':faces})
+    
+    # order cells by number of faces
+    face_number = [len(cell['faces']) for cell in mesh_data]
+    elem_order = np.argsort(face_number)
+    mesh_data = [mesh_data[idx] for idx in elem_order]
+    for idx,elem in enumerate(mesh_data):
+        elem['idx'] = idx
+  
+    face_hash = {}
+    for elem in mesh_data:
+        for f in elem['faces']:
+            if f not in face_hash:
+                face_hash[f] = {'lr':[elem['idx'], -1], 'vertices':f}
+            else:
+                face_hash[f]['lr'][1] = elem['idx']
+    
+    face_data = []
+    for f in face_hash:
+        face_data.append(face_hash[f])
+    
+    vertex_number = [len(face['vertices']) for face in face_data]
+    face_order = np.argsort(vertex_number)
+    face_data = [face_data[idx] for idx in face_order]
+    for idx, f in enumerate(face_data):
+        f['idx'] = idx
+
+    for elem in mesh_data:
+        elem['fidx'] = np.zeros((len(elem['faces']),)) 
+        for idx, f in enumerate(elem['faces']):
+            elem['fidx'][idx] = face_hash[f]['idx']
+
+    
+    
+    
+    
+    
+    
     # compute mesh stats
     def PolyArea(x,y):
         return 0.5*np.abs(np.sum(x * np.roll(y,1,axis=1),axis = 1)-np.sum(y * np.roll(x,1,axis=1), axis = 1))
@@ -313,6 +383,7 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
     
     
     
+    
     reg_vol = area[0]
     min_vol_frac = np.min(area) / reg_vol
     str_whole = str(cells_whole.shape[0])
@@ -336,4 +407,4 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
         console.print("Plotting...", style="bold blue")
         plot_mesh(vertices,cell_list,vertex_count, dom, num_regular_vertices)
     
-    return vertices, cell_list, domain
+    return vertices, cell_list, domain, mesh_data, face_data
