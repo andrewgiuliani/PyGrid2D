@@ -42,7 +42,7 @@ def load_vertices_elem(domain, Nx, Ny, q):
     (40,40,4,2)
 ])
 def test_PyGrid(Nx, Ny, q, bid):
-    vertices, elem, domain = pg2d.PyGrid2D(Nx, Ny, False, q, bid)
+    vertices, elem, domain, mesh_data, face_data = pg2d.PyGrid2D(Nx, Ny, False, q, bid)
     vertices_loaded = load_vertices_elem(domain, Nx, Ny, q)
 
     err = np.linalg.norm(vertices - vertices_loaded)
