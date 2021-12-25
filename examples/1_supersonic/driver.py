@@ -4,7 +4,7 @@ import pygrid2d as pg2d
 Nx = 25
 Ny = 25
 plot_flag = True
-q = 5   # q = 5 means the mesh generator will compute 6 points on the embedded boundary, resulting in a degree 5 polynomial boundary interpolant
+q = 1   # q = 5 means the mesh generator will compute 6 points on the embedded boundary, resulting in a degree 5 polynomial boundary interpolant
 bid = 1 # bodyID = 1 means supersonic domain
 
 vertices, cell_list, domain, mesh_data, face_data = pg2d.PyGrid2D(Nx, Ny, plot_flag, q, bid)
