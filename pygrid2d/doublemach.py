@@ -3,12 +3,14 @@ from .domain import Domain
 
 class DoubleMach(Domain):
     name = 'doublemach'
-    left = 0
-    right = 2.5
-    bottom = 0
-    top = 1.75
-    corner_x = 1./6.
-    corner_y = 1e-10
+    
+    def __init__(self):
+        self.left = 0
+        self.right = 2.5
+        self.bottom = 0
+        self.top = 1.75
+        self.corner_x = 1./6.
+        self.corner_y = 1e-10
 
     def in_domain(self, X,Y):
         dist_from_wedge = (X - self.corner_x) * np.sin(30*np.pi/180) + (Y - self.corner_y) * -np.cos(30 * np.pi/180)
@@ -19,7 +21,30 @@ class DoubleMach(Domain):
     
     def bc_id(self,bid):
         return bid
-    
+
+
+
+    def vertex2bc(self, x, y):
+        dist_from_wedge = (x - self.corner_x) * np.sin(30*np.pi/180) + (y - self.corner_y) * -np.cos(30 * np.pi/180)
+        bval1 = -1*np.less_equal(-dist_from_wedge, 1e-14)
+        bval2 = -1*np.less_equal(y, self.corner_y+1e-14)
+        left = -2*(np.abs(x-self.left)<1e-14)
+        right = -2*(np.abs(x-self.right)<1e-14)
+        top = -2*(np.abs(y-self.top)<1e-14)
+
+        bc = bval1+bval2+left+top+right
+
+        decided = np.where(np.logical_xor(np.logical_xor(np.logical_xor(np.logical_xor(bval1, bval2), left), right), top))
+        out = np.zeros(x.shape)
+        out[decided] = bc[decided]
+        return out
+
+
+
+
+
+
+
     def bc(self,x,y):
         dist_from_wedge = (x - self.corner_x) * np.sin(30*np.pi/180) + (y - self.corner_y) * -np.cos(30 * np.pi/180)
         bc_out = -1*(np.abs(y-self.corner_y) < 1e-13) - 2 * (np.abs(dist_from_wedge) < 1e-13)

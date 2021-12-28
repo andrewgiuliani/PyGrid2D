@@ -39,7 +39,31 @@ class Circles(Domain):
         return idx 
     def bc_id(self,bid):
         return bid[0]
-    
+
+
+
+    def vertex2bc(self,x,y):
+        Xp = x.ravel() 
+        Yp = y.ravel() 
+
+        rdiff = np.sqrt( (Xp[:,None]-self.centroids[:,0])**2. +  (Yp[:,None]-self.centroids[:,1])**2.)-self.Ri
+        bools = rdiff < 1e-14
+        decided = np.where(rdiff < 1e-14)[0]
+
+        out = np.zeros(x.shape)
+        out[decided] = -1
+        
+        if decided.size == 0:
+            out[:] = -2
+        return out
+
+
+
+
+
+
+
+
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         idx = -self.bc(X1,Y1) - 1
 

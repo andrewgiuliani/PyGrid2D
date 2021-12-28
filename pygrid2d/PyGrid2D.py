@@ -340,8 +340,6 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
         y = vertices[f, 1]
         bc = domain.vertex2bc(x,y) # returns zero if vertex is a member of multiple or no EBs
         final_bc = np.min(bc) # 0 or a negative number
-        if final_bc==0:
-            import ipdb;ipdb.set_trace()
         assert final_bc != 0
         face_hash[f]['lr'][1] = final_bc
 
