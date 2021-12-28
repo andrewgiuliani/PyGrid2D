@@ -35,7 +35,21 @@ class Annulus(Domain):
 
     def bc_id(self, bid):
         return bid
-    
+
+    def vertex2bc(self, x, y):
+        r = np.sqrt( (x-self.sx)**2. +  (y-self.sy)**2.)
+        r1 = -1*(np.abs(r-self.R1) < 1e-14)
+        r2 = -1*(np.abs(r-self.R2) < 1e-14)
+        bc = r1+r2 
+
+        decided = np.where(np.logical_xor(r1, r2))
+        out = np.zeros(x.shape)
+        out[decided] = bc[decided]
+        return out
+
+
+
+
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         bc1 = self.bc(X1,Y1)
         bc2 = self.bc(X2,Y2)

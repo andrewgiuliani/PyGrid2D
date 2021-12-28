@@ -30,7 +30,24 @@ class Supersonic(Domain):
             quit()
         
         return r1+r2    
-    
+
+    # -1 reflecting, -2 is inflow/outflow
+    def vertex2bc(self, x, y):
+        r = np.sqrt(x**2. +  y**2.)
+        r1 = -1*(np.abs(r-self.R1) < 1e-14)
+        r2 = -1*(np.abs(r-self.R2) < 1e-14)
+        bot= -2*(np.abs(y < 1e-14))
+        left=-2*(np.abs(x < 1e-14))
+        bc = r1+r2+bot+left
+        decided = np.where(np.logical_xor(np.logical_xor(np.logical_xor(r1, r2), bot), left))
+        out = np.zeros(x.shape)
+        out[decided] = bc[decided]
+        return out
+
+
+
+
+
     def curved_points(self,wgt,X1,Y1,X2,Y2):
         bc1 = self.bc(X1,Y1)
         bc2 = self.bc(X2,Y2)

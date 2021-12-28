@@ -1,5 +1,28 @@
 import numpy as np
 
+def output_nor(vertices, mesh_data, face_data, domain, Nx, Ny, q):
+    assert q == 1
+
+    f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".nor", 'w')
+    num_faces = len(face_data)
+    nor = np.zeros((num_faces,3))
+    count = 0
+    for face in face_data:
+        v = face['vertices']
+        x = np.zeros((2,))
+        y = np.zeros((2,))
+        for i in range(2):
+            x[i] = vertices[v[i],0]
+            y[i] = vertices[v[i],1]
+        dx = x[1]-x[0]
+        dy = y[1]-y[0]
+        nn = np.sqrt(dx**2 + dy**2)
+        nor[count,0] = dy/nn
+        nor[count,1] = -dx/nn
+        count+=1
+    np.savetxt(f,nor)
+    f.close()
+    
 def output_ply(vertices, cells, domain, Nx, Ny, q):
     f = open(domain.name+"_"+str(Nx)+"_"+str(Ny)+"_q" + str(q)+".ply", 'w')
     f.write("ply\n")
@@ -30,11 +53,13 @@ def output_unstructured(vertices, mesh_data, face_data, domain, Nx, Ny, q):
     
     f.write("cells " + str(tot_elem) + "\n")
     for c in mesh_data:
-        np.savetxt(f, c['fidx'].reshape((1,-1)), fmt='%i')
+        cdata = np.concatenate( ([c['cut']], c['fidx']) )
+        np.savetxt(f, cdata.reshape((1,-1)), fmt='%i')
 
     f.write("faces " + str(tot_face) + "\n")
     for face in face_data:
-        np.savetxt(f, np.array(face['vertices']).reshape((1,-1)), fmt='%i')
+        fdata = np.concatenate( ([face['cut']], face['vertices']) )
+        np.savetxt(f, fdata.reshape((1,-1)), fmt='%i')
 
     f.write("faces left right " + str(tot_face) + "\n")
     for face in face_data:

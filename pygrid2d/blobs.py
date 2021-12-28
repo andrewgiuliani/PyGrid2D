@@ -57,11 +57,34 @@ class Blobs(Domain):
         R_blob =  np.sum(self.modes_sin[None,:,:] * np.sin(ntheta) + self.modes_cos[None,:,:] * np.cos(ntheta), axis = 2)
  
         rdiff = np.sqrt( (Xp[:,None]-self.centroids[:,0])**2. +  (Yp[:,None]-self.centroids[:,1])**2.)-R_blob
-        bools = rdiff < 1e-14
         idx = -np.where(rdiff < 1e-14)[1]-1
+        
         return idx 
     def bc_id(self,bid):
         return -1  
+
+    def vertex2bc(self,x,y):
+        Xp = x.ravel() 
+        Yp = y.ravel() 
+        R = np.sqrt( (Xp[:,None] - self.centroids[:,0])**2 + (Yp[:,None] - self.centroids[:,1])**2)
+        theta = np.arctan2(Yp[:,None] - self.centroids[:,1], Xp[:,None] - self.centroids[:,0])
+        
+ 
+        ntheta = np.array( range(self.num_modes) )[None,None,:] * theta[:,:,None]
+        R_blob =  np.sum(self.modes_sin[None,:,:] * np.sin(ntheta) + self.modes_cos[None,:,:] * np.cos(ntheta), axis = 2)
+ 
+        rdiff = np.sqrt( (Xp[:,None]-self.centroids[:,0])**2. +  (Yp[:,None]-self.centroids[:,1])**2.)-R_blob
+        decided = np.where(rdiff < 1e-14)[0]
+        
+
+        out = np.zeros(x.shape)
+        out[decided] = -1
+        
+        if decided.size == 0:
+            out[:] = -2
+        return out
+
+
 
     def target_ratio(self, wgt, idx,R1, angle1, angle2, R3, angle3) :
         X1,Y1 = R1 * np.cos(angle1), R1* np.sin(angle1) 

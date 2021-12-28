@@ -286,9 +286,9 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
     # cell_list - bins of cells
     # vertex_count - number of vertices of cells in each bin
     # ncf - number of irregular faces associated to cells in each bin
-    
     mesh_data = []
-    for c, num_curved_faces in zip(cell_list, ncf):
+    for bin_idx, (c, num_curved_faces) in enumerate(zip(cell_list, ncf)):
+        cut = bin_idx!=0
         for idx in range(c.shape[0]):
             faces = []
             
@@ -313,7 +313,7 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
                     faces.append( vertices_extra[v1:v2] )
                     v1 = v2-1
                     v2 = v1 + q+1
-            mesh_data.append({'vertices': c[idx,:], 'num_curved_faces': num_curved_faces, 'faces':faces})
+            mesh_data.append({'vertices': c[idx,:], 'num_curved_faces': num_curved_faces, 'faces':faces, 'cut':cut})
     
     # order cells by number of faces
     face_number = [len(cell['faces']) for cell in mesh_data]
@@ -327,10 +327,25 @@ def PyGrid2D(Nx, Ny, plot_flag, q, bid):
         for f in elem['faces']:
             fkey = tuple(np.sort(f))
             if fkey not in face_hash:
-                face_hash[fkey] = {'lr':[elem['idx'], -1], 'vertices':f}
+                face_hash[fkey] = {'lr':[elem['idx'], -1], 'vertices':f, 'cut':elem['cut']}
             else:
                 face_hash[fkey]['lr'][1] = elem['idx']
+                prev_cut = face_hash[fkey]['cut']
+                face_hash[fkey]['cut'] = elem['cut'] if prev_cut==0 else prev_cut
     
+    for f in face_hash:
+        if face_hash[f]['lr'][1] > -1:
+            continue
+        x = vertices[f, 0]
+        y = vertices[f, 1]
+        bc = domain.vertex2bc(x,y) # returns zero if vertex is a member of multiple or no EBs
+        final_bc = np.min(bc) # 0 or a negative number
+        if final_bc==0:
+            import ipdb;ipdb.set_trace()
+        assert final_bc != 0
+        face_hash[f]['lr'][1] = final_bc
+
+
     face_data = []
     for f in face_hash:
         face_data.append(face_hash[f])

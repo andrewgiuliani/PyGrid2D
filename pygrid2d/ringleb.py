@@ -75,7 +75,7 @@ class Ringleb(Domain):
         else:
             return -2
 
-    
+    # DEPRECATE THIS. 
     def bc(self,x,y):
         k,q = self.xy2kq(x,y)
         dk_min = -1*(np.abs(k-self.kmin) < 1e-13)
@@ -90,6 +90,21 @@ class Ringleb(Domain):
         
         return dk_min+dk_max+dq_min
     
+    # -1 reflecting, -2 is inflow/outflow
+    def vertex2bc(self, x, y):
+        k,q = self.xy2kq(x,y)
+        dk_min = -1*(np.abs(k-self.kmin) < 1e-13)
+        dk_max = -1*(np.abs(k-self.kmax) < 1e-13)
+        dq_min = -2*(np.abs(q-self.qmin) < 1e-13)
+        bot    = -2*(np.abs(y) < 1e-13) 
+        bc = dk_min+dk_max+dq_min+bot
+        decided = np.where(np.logical_xor(np.logical_xor(np.logical_xor(dk_min, dk_max), dq_min), bot))
+        
+        out = np.zeros(x.shape)
+        out[decided] = bc[decided]
+        return out
+
+
     def target_ratio(self, wgt, k1, q1, k2, q2, k3, q3) :
         X1,Y1 =  self.kq2xy(k1,q1)
         X2,Y2 =  self.kq2xy(k2,q2)
