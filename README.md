@@ -84,7 +84,7 @@ We do not support the above scenarios for code simplicity, however, they must be
 
 ## 🏗&nbsp; Grid generation
 
-The different arguments that `./examples/8_argrun/driver.py` accepts are explained below:
+Of the many examples included here, the script in `./examples/8_argrun/driver.py` accepts command line arguments, which are explained below:
 
 
 -Nx
